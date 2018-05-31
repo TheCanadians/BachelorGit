@@ -68,6 +68,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4947877399748850}
   - component: {fileID: 212587754285396534}
+  - component: {fileID: 114543046580868798}
   m_Layer: 0
   m_Name: Sensor (2)
   m_TagString: Untagged
@@ -84,6 +85,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4181573596499792}
   - component: {fileID: 212383773412663300}
+  - component: {fileID: 114322288410539644}
   m_Layer: 0
   m_Name: Sensor (1)
   m_TagString: Untagged
@@ -118,6 +120,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4852745536657198}
   - component: {fileID: 212621730368404562}
+  - component: {fileID: 114324002874366444}
   m_Layer: 0
   m_Name: Sensor
   m_TagString: Untagged
@@ -267,6 +270,51 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 6.4, y: 4}
   m_EdgeRadius: 0
+--- !u!114 &114322288410539644
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1714071436081570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bb78f9cc4a50b24cae66f275ed91587, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SensorLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  EndPoint: {fileID: 212670158552075282}
+--- !u!114 &114324002874366444
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1984747683240122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bb78f9cc4a50b24cae66f275ed91587, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SensorLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  EndPoint: {fileID: 212441695487324512}
+--- !u!114 &114543046580868798
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1705328030957540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bb78f9cc4a50b24cae66f275ed91587, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SensorLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  EndPoint: {fileID: 212739203349293412}
 --- !u!212 &212383773412663300
 SpriteRenderer:
   m_ObjectHideFlags: 1
