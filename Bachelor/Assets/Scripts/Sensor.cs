@@ -38,7 +38,11 @@ public class Sensor : MonoBehaviour {
         distance = wallHit.distance;
         // Set EndPoint position to raycast hit position
         EndPoint.transform.position = (Vector2)this.transform.position + sensorDirection * wallHit.distance;
-        Debug.Log(EndPoint.gameObject.name + " " + distance);
+    }
+
+    public float GetDistance()
+    {
+        return distance;
     }
 
     // Help functions

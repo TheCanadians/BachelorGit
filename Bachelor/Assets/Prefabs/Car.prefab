@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 212858040800274494}
   - component: {fileID: 50839706115330326}
   - component: {fileID: 61690174828572226}
+  - component: {fileID: 114114716457799182}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -270,6 +271,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 6.4, y: 4}
   m_EdgeRadius: 0
+--- !u!114 &114114716457799182
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1981868725498934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83efbd898ccaedc42bd646b44562b13b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114322288410539644
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -283,7 +295,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SensorLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 0
   EndPoint: {fileID: 212670158552075282}
 --- !u!114 &114324002874366444
 MonoBehaviour:
@@ -298,7 +310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SensorLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 0
   EndPoint: {fileID: 212441695487324512}
 --- !u!114 &114543046580868798
 MonoBehaviour:
@@ -313,7 +325,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SensorLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 0
   EndPoint: {fileID: 212739203349293412}
 --- !u!212 &212383773412663300
 SpriteRenderer:
