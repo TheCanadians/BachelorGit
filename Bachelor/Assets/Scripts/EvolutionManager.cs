@@ -6,6 +6,7 @@ public class EvolutionManager : MonoBehaviour {
 
     public GameObject carPrefab;
 
+    public float timer = 20f;
     public int populationSize = 20;
     public int[] layers = new int[] {3, 5, 5, 2}; // Topology
 
@@ -29,13 +30,27 @@ public class EvolutionManager : MonoBehaviour {
             }
             else
             {
-                nets.Sort();
-                for (int i = 0; i < populationSize / 2; i++)
+                if (carList != null)
                 {
-                    nets[i] = new NeuralNetwork(nets[i + (populationSize / 2)]);
+                    for (int i = 0; i < populationSize; i++)
+                    {
+                        carList[i].CheckDistance(true);
+                        Debug.Log(i + "   " + nets[i].GetFitness());
+                    }
+                }
+                nets.Sort();
+                NeuralNetwork best = new NeuralNetwork(nets[nets.Count - 1]);
+                NeuralNetwork secBest = new NeuralNetwork(nets[nets.Count - 2]);
+                nets[nets.Count - 1] = new NeuralNetwork(best);
+                nets[nets.Count - 2] = new NeuralNetwork(secBest);
+                for (int i = 0; i < (populationSize/2)-1; i++)
+                {
+                    nets[i] = new NeuralNetwork(best);
+                    nets[i + (populationSize / 2)-1] = new NeuralNetwork(secBest);
                     nets[i].Mutate();
+                    nets[i + (populationSize / 2)-1].Mutate();
 
-                    nets[i + (populationSize / 2)] = new NeuralNetwork(nets[i + (populationSize / 2)]);
+                    //nets[i + (populationSize / 2)] = new NeuralNetwork(nets[i + (populationSize / 2)]);
                 }
 
                 for (int i = 0; i < populationSize; i++)
@@ -47,7 +62,7 @@ public class EvolutionManager : MonoBehaviour {
             generationNumber++;
 
             isTraining = true;
-            Invoke("StartTraining", 15f);
+            Invoke("StartTraining", timer);
             CreateCars();
         }
     }

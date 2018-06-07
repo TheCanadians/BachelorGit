@@ -11,7 +11,7 @@ public class Sensor : MonoBehaviour {
 
     // Max sensor distance
     [SerializeField]
-    private const float MAX_DISTANCE = 10f;
+    private float MAX_DISTANCE = 10f;
 
     private float distance;
 
