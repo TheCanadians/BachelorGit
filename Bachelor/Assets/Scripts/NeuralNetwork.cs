@@ -201,4 +201,20 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
             return 0;
         }
     } 
+
+    public int[] GetLayers()
+    {
+        return layers;
+    }
+
+    public int GetNeuronsInLayer(int layer)
+    {
+        int count = neurons[layer].Length;
+        return count;
+    }
+
+    public float[][][] GetWeightsMatrix()
+    {
+        return weights;
+    }
 }

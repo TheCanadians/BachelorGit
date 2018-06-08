@@ -104,4 +104,9 @@ public class EvolutionManager : MonoBehaviour {
             nets.Add(net);
         }
     }
+
+    public int GetGenerationCount()
+    {
+        return generationNumber;
+    }
 }

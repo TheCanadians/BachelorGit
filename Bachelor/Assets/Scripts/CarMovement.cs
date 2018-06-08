@@ -112,4 +112,9 @@ public class CarMovement : MonoBehaviour {
         }
         this.GetComponent<CarMovement>().enabled = false;
     }
+
+    public NeuralNetwork GetNeuralNetwork()
+    {
+        return net;
+    }
 }

@@ -62,6 +62,11 @@
     <Compile Include="Assets\Scripts\CarMovement.cs" />
     <Compile Include="Assets\Scripts\Checkpoint.cs" />
     <Compile Include="Assets\Scripts\EvolutionManager.cs" />
+    <Compile Include="Assets\Scripts\GUI\UIController.cs" />
+    <Compile Include="Assets\Scripts\GUI\UINeuralNetLayerPanel.cs" />
+    <Compile Include="Assets\Scripts\GUI\UINeuralNetworkPanel.cs" />
+    <Compile Include="Assets\Scripts\GUI\UINeuralNetworkWeightPanel.cs" />
+    <Compile Include="Assets\Scripts\GUI\UISimulationController.cs" />
     <Compile Include="Assets\Scripts\NeuralNetwork.cs" />
     <Compile Include="Assets\Scripts\Sensor.cs" />
     <Reference Include="UnityEditor.StandardEvents">
