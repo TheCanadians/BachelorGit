@@ -86,8 +86,11 @@ public class CarMovement : MonoBehaviour {
         showDistance = distance;
         if (distance < 50f)
         {
-            currentCheckpoint++;
-            net.AddFitness(1f);
+            if (currentCheckpoint < checkpoints.Length - 1)
+            {
+                currentCheckpoint++;
+                net.AddFitness(1f);
+            }
         }
         if (end)
         {

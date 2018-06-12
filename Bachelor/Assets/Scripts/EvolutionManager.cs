@@ -35,7 +35,6 @@ public class EvolutionManager : MonoBehaviour {
                     for (int i = 0; i < populationSize; i++)
                     {
                         carList[i].CheckDistance(true);
-                        Debug.Log(i + "   " + nets[i].GetFitness());
                     }
                 }
                 nets.Sort();

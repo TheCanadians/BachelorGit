@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 public class NeuralNetwork : IComparable<NeuralNetwork> {
 
@@ -72,7 +73,6 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
             List<float[]> weightsPerLayerList = new List<float[]>();
 
             int neuronsInPrevLayer = layers[i - 1];
-
             //loop through all neurons in this layer
             for (int j = 0; j < neurons[i].Length; j++)
             {

@@ -16,6 +16,8 @@ public class UISimulationController : MonoBehaviour {
     private NeuralNetwork car;
     private EvolutionManager evoManager;
 
+    private bool activate = false;
+
     private void Start()
     {
         car = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<CarMovement>().GetNeuralNetwork();
@@ -26,7 +28,12 @@ public class UISimulationController : MonoBehaviour {
     {
         car = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<CarMovement>().GetNeuralNetwork();
         evoManager = GameObject.Find("EvolutionManager").GetComponent<EvolutionManager>();
-        NeuralNetPanel.Display(car);
+        if(!activate)
+        {
+            NeuralNetPanel.Display(car);
+            activate = true;
+        }
+            
 
         Fitness.text = car.GetFitness().ToString();
         GenerationCount.text = evoManager.GetGenerationCount().ToString();

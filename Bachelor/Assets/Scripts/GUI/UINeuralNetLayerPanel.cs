@@ -18,8 +18,7 @@ public class UINeuralNetLayerPanel : MonoBehaviour
 
     public void Display(int layer)
     {
-
-        Display(net.GetNeuronsInLayer(layer));
+        Display((uint)net.GetNeuronsInLayer(layer));
     }
 
     public void Display(uint neuronCount)

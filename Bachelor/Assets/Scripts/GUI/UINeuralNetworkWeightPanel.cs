@@ -22,7 +22,6 @@ public class UINeuralNetworkWeightPanel : MonoBehaviour {
     {
         Image dummyWeight = Weights[0];
         dummyWeight.gameObject.SetActive(true);
-
         for (int i = Weights.Count; i < net.GetNeuronsInLayer(currentLayer + 1); i++)
         {
             Image newWeight = Instantiate(dummyWeight);
@@ -58,10 +57,16 @@ public class UINeuralNetworkWeightPanel : MonoBehaviour {
 
     private void PositionConnection(Image connection, UINeuralNetworkWeightPanel otherNode, int nodeIndex, int connectedNodeIndex, float[][] weights)
     {
+        /*
+        Debug.Log("node Index: " + nodeIndex);
+        Debug.Log("Connected Node Index: " + connectedNodeIndex);
+        Debug.Log("Weight["+nodeIndex+"]["+connectedNodeIndex+"]:  " + weights[nodeIndex][connectedNodeIndex]);
+        Debug.Log("Node: " + nodeIndex + "   Connected Node: " + connectedNodeIndex + "   Weight: " + weights[nodeIndex][connectedNodeIndex]);
+        */
         connection.transform.localPosition = Vector3.zero;
 
         Vector2 sizeDelta = connection.rectTransform.sizeDelta;
-        float weight = weights[nodeIndex][connectedNodeIndex];
+        float weight = weights[connectedNodeIndex][nodeIndex];
         sizeDelta.x = (float)System.Math.Abs(weight);
         if (sizeDelta.x < 1)
         {
@@ -76,7 +81,9 @@ public class UINeuralNetworkWeightPanel : MonoBehaviour {
         {
             connection.color = NegativeColor;
         }
-
+        Color var = connection.color;
+        var.a = 1f;
+        connection.color = var;
         Vector2 connectionVector = this.transform.position - otherNode.transform.position;
         sizeDelta.y = connectionVector.magnitude / GameObject.Find("UI").GetComponent<Canvas>().scaleFactor;
 
