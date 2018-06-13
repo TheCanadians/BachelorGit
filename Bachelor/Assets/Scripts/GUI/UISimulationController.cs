@@ -6,6 +6,8 @@ using System.Collections;
 public class UISimulationController : MonoBehaviour {
 
     [SerializeField]
+    private Camera camera;
+    [SerializeField]
     private Text[] InputTexts;
     [SerializeField]
     private Text Fitness;
@@ -26,7 +28,6 @@ public class UISimulationController : MonoBehaviour {
     {
         cars = GameObject.FindGameObjectsWithTag("Player");
         carsNetwork = new NeuralNetwork[cars.Length];
-        NeuralNetwork car = cars[0].GetComponent<CarMovement>().GetNeuralNetwork();
         evoManager = GameObject.Find("EvolutionManager").GetComponent<EvolutionManager>();
     }
 
@@ -74,6 +75,7 @@ public class UISimulationController : MonoBehaviour {
             if (cars[i].GetComponent<CarMovement>().GetNeuralNetwork().GetFitness() == carsNetwork[carsNetwork.Length - 1].GetFitness())
             {
                 cars[i].GetComponent<SpriteRenderer>().sprite = firstCar;
+                camera.GetComponent<CameraMovement>().SetTarget(cars[i]);
             }
             else
             {

@@ -874,6 +874,7 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
+  - component: {fileID: 519420030}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -888,6 +889,18 @@ AudioListener:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
+--- !u!114 &519420030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a8d25bc79c9ebb4ab59160a16c256cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CamSpeed: 5
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -908,7 +921,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 200
+  orthographic size: 100
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1808,7 +1821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carPrefab: {fileID: 1981868725498934, guid: 6d1271dd8f3998a458b74253b22ac9a3, type: 2}
-  timer: 30
+  timer: 500
   populationSize: 15
   layers: 03000000050000000500000002000000
 --- !u!4 &1221043996
@@ -1872,6 +1885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82acd294ecaffdf428c57aa544795dfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camera: {fileID: 519420031}
   InputTexts:
   - {fileID: 848381641}
   - {fileID: 365452308}

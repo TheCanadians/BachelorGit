@@ -11,6 +11,7 @@ public class EvolutionManager : MonoBehaviour {
     public int[] layers = new int[] {3, 5, 5, 2}; // Topology
 
     private bool isTraining = false;
+    private bool isSpawning = true;
     private int generationNumber = 0;
     private List<NeuralNetwork> nets;
     private List<CarMovement> carList = null;
@@ -61,8 +62,30 @@ public class EvolutionManager : MonoBehaviour {
             generationNumber++;
 
             isTraining = true;
+            isSpawning = true;
             Invoke("StartTraining", timer);
             CreateCars();
+        }
+        if (isSpawning)
+        {
+            CheckAlive();
+        }
+    }
+
+    private void CheckAlive()
+    {
+        int deathCounter = 0;
+        for (int i = 0; i < carList.Count; i++)
+        {
+            if (carList[i].isAlive == false)
+            {
+                deathCounter++;
+            }
+            if (deathCounter == carList.Count)
+            {
+                isSpawning = false;
+                Invoke("StartTraining", 1f);
+            }
         }
     }
     

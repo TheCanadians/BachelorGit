@@ -11,6 +11,8 @@ public class CarMovement : MonoBehaviour {
     private float acc = 8f;
     [SerializeField]
     private float turnSpeed = 100f;
+    [SerializeField]
+    private float maxTime = 7f;
 
     private float velocity;
     private Quaternion rotation;
@@ -30,6 +32,10 @@ public class CarMovement : MonoBehaviour {
     private float fitness = 0f;
 
     private float[] sensorOutputs;
+
+    public float timeSinceCheckpoint = 0f;
+
+    public bool isAlive = true;
 
     private void Start()
     {
@@ -75,6 +81,7 @@ public class CarMovement : MonoBehaviour {
             this.transform.position += direction * velocity * Time.deltaTime;
 
             CheckDistance();
+            CheckTime();
             showFitnessLevel = net.GetFitness();
         }
     }
@@ -104,10 +111,26 @@ public class CarMovement : MonoBehaviour {
         showDistance = distance;
         if (distance < checkpoints[currentCheckpoint].GetComponent<Checkpoint>().radius)
         {
+            timeSinceCheckpoint = 0f;
             if (currentCheckpoint < checkpoints.Length - 1)
             {
                 currentCheckpoint++;
             }
+            else
+            {
+                net.SetFitness(checkpoints[currentCheckpoint].GetComponent<Checkpoint>().fitnessValue);
+            }
+        }
+        else
+        {
+            timeSinceCheckpoint += Time.deltaTime;
+        }
+    }
+
+    private void CheckTime()
+    {
+        if (timeSinceCheckpoint >= maxTime) {
+            Die();
         }
     }
 
@@ -126,6 +149,7 @@ public class CarMovement : MonoBehaviour {
             sensors[i].gameObject.SetActive(false);
         }
         this.GetComponent<CarMovement>().enabled = false;
+        isAlive = false;
     }
 
     public NeuralNetwork GetNeuralNetwork()

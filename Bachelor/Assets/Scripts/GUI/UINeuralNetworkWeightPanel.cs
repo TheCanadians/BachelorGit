@@ -57,17 +57,11 @@ public class UINeuralNetworkWeightPanel : MonoBehaviour {
 
     private void PositionConnection(Image connection, UINeuralNetworkWeightPanel otherNode, int nodeIndex, int connectedNodeIndex, float[][] weights)
     {
-        /*
-        Debug.Log("node Index: " + nodeIndex);
-        Debug.Log("Connected Node Index: " + connectedNodeIndex);
-        Debug.Log("Weight["+nodeIndex+"]["+connectedNodeIndex+"]:  " + weights[nodeIndex][connectedNodeIndex]);
-        Debug.Log("Node: " + nodeIndex + "   Connected Node: " + connectedNodeIndex + "   Weight: " + weights[nodeIndex][connectedNodeIndex]);
-        */
         connection.transform.localPosition = Vector3.zero;
 
         Vector2 sizeDelta = connection.rectTransform.sizeDelta;
         float weight = weights[connectedNodeIndex][nodeIndex];
-        sizeDelta.x = (float)System.Math.Abs(weight);
+        sizeDelta.x = (float)System.Math.Abs(weight * 2);
         if (sizeDelta.x < 1)
         {
             sizeDelta.x = 1;

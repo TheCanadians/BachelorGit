@@ -82,7 +82,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
                 for (int k = 0; k < neuronsInPrevLayer; k++)
                 {
                     // set weights to random value between -0.5f and 0.5f
-                    neuronWeights[k] = UnityEngine.Random.Range(-0.5f, 0.5f);
+                    neuronWeights[k] = UnityEngine.Random.Range(-1f, 1f);
                 }
 
                 // add to List weightsPerLayerList
@@ -140,26 +140,26 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
                     // random number to check if to mutate weight
                     float randomNum = UnityEngine.Random.Range(0f, 100f);
 
-                    if (randomNum <= 2f)
+                    if (randomNum <= 3f)
                     {
                         // flip sign
                         weight *= -1;
                     }
-                    else if (randomNum <= 4f)
-                    {
-                        // new weight
-                        weight = UnityEngine.Random.Range(-0.5f, 0.5f);
-                    }
                     else if (randomNum <= 6f)
                     {
+                        // new weight
+                        weight = UnityEngine.Random.Range(-1f, 1f);
+                    }
+                    else if (randomNum <= 9f)
+                    {
                         // increase weight
-                        float factor = UnityEngine.Random.Range(0f, 1f) + 1f;
+                        float factor = UnityEngine.Random.Range(0f, 1.5f) + 1f;
                         weight *= factor;
                     }
-                    else if (randomNum <= 8f)
+                    else if (randomNum <= 12f)
                     {
                         // decrease weight
-                        float factor = UnityEngine.Random.Range(0f, 1f);
+                        float factor = UnityEngine.Random.Range(0f, 1.5f);
                         weight *= factor;
                     }
                     weights[i][j][k] = weight;
