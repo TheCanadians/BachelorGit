@@ -155,7 +155,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_LocalScale.x
@@ -168,6 +168,11 @@ Prefab:
     - target: {fileID: 1644802025739996, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_Name
       value: Checkpoint (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114702221726956924, guid: 1df6ac8223058c4478dd25b69b0a3114,
+        type: 2}
+      propertyPath: fitnessValue
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
@@ -197,6 +202,7 @@ Transform:
   m_LocalPosition: {x: 220.1, y: 129.8, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_Children:
+  - {fileID: 1936434067}
   - {fileID: 625530527}
   - {fileID: 633523353}
   - {fileID: 50138279}
@@ -570,7 +576,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_LocalScale.x
@@ -583,6 +589,11 @@ Prefab:
     - target: {fileID: 1644802025739996, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_Name
       value: Checkpoint (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114702221726956924, guid: 1df6ac8223058c4478dd25b69b0a3114,
+        type: 2}
+      propertyPath: fitnessValue
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
@@ -831,7 +842,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_LocalScale.x
@@ -844,6 +855,11 @@ Prefab:
     - target: {fileID: 1644802025739996, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_Name
       value: Checkpoint (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114702221726956924, guid: 1df6ac8223058c4478dd25b69b0a3114,
+        type: 2}
+      propertyPath: fitnessValue
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
@@ -994,7 +1010,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_LocalScale.x
@@ -1007,6 +1023,11 @@ Prefab:
     - target: {fileID: 1644802025739996, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_Name
       value: Checkpoint (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114702221726956924, guid: 1df6ac8223058c4478dd25b69b0a3114,
+        type: 2}
+      propertyPath: fitnessValue
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
@@ -1230,7 +1251,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_LocalScale.x
@@ -1243,6 +1264,11 @@ Prefab:
     - target: {fileID: 1644802025739996, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_Name
       value: Checkpoint (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114702221726956924, guid: 1df6ac8223058c4478dd25b69b0a3114,
+        type: 2}
+      propertyPath: fitnessValue
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
@@ -1516,7 +1542,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_LocalScale.x
@@ -1529,6 +1555,58 @@ Prefab:
     - target: {fileID: 1644802025739996, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_Name
       value: Checkpoint (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114702221726956924, guid: 1df6ac8223058c4478dd25b69b0a3114,
+        type: 2}
+      propertyPath: fitnessValue
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
+  m_IsPrefabParent: 0
+--- !u!1001 &1134573814
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 86850603}
+    m_Modifications:
+    - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -22
+      objectReference: {fileID: 0}
+    - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -13
+      objectReference: {fileID: 0}
+    - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114702221726956924, guid: 1df6ac8223058c4478dd25b69b0a3114,
+        type: 2}
+      propertyPath: radius
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
@@ -1595,7 +1673,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.6117647, g: 0.6117647, b: 0.6117647, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1675,7 +1753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1730,7 +1808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carPrefab: {fileID: 1981868725498934, guid: 6d1271dd8f3998a458b74253b22ac9a3, type: 2}
-  timer: 60
+  timer: 30
   populationSize: 15
   layers: 03000000050000000500000002000000
 --- !u!4 &1221043996
@@ -1800,6 +1878,8 @@ MonoBehaviour:
   Fitness: {fileID: 360663555}
   GenerationCount: {fileID: 1756406596}
   NeuralNetPanel: {fileID: 799866812}
+  firstCar: {fileID: 21300000, guid: 3bd2eaf80f9a8c34791c311716c99de8, type: 3}
+  normalCar: {fileID: 21300000, guid: 1261ff970a8d3a340bd05c49006bf044, type: 3}
 --- !u!1001 &1348605410
 Prefab:
   m_ObjectHideFlags: 0
@@ -2027,7 +2107,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_LocalScale.x
@@ -2040,6 +2120,16 @@ Prefab:
     - target: {fileID: 1644802025739996, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_Name
       value: Checkpoint (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114702221726956924, guid: 1df6ac8223058c4478dd25b69b0a3114,
+        type: 2}
+      propertyPath: fitnessValue
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114702221726956924, guid: 1df6ac8223058c4478dd25b69b0a3114,
+        type: 2}
+      propertyPath: segments
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
@@ -2244,7 +2334,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_LocalScale.x
@@ -2257,6 +2347,11 @@ Prefab:
     - target: {fileID: 1644802025739996, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
       propertyPath: m_Name
       value: Checkpoint (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 114702221726956924, guid: 1df6ac8223058c4478dd25b69b0a3114,
+        type: 2}
+      propertyPath: fitnessValue
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1df6ac8223058c4478dd25b69b0a3114, type: 2}
@@ -2314,7 +2409,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.6117647, g: 0.6117647, b: 0.6117647, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2662,6 +2757,11 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!4 &1936434067 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4150649633558306, guid: 1df6ac8223058c4478dd25b69b0a3114,
+    type: 2}
+  m_PrefabInternal: {fileID: 1134573814}
 --- !u!1 &1953726101
 GameObject:
   m_ObjectHideFlags: 0
@@ -3001,7 +3101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.6117647, g: 0.6117647, b: 0.6117647, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

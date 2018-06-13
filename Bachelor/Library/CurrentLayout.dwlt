@@ -109,7 +109,7 @@ MonoBehaviour:
   m_MinSize: {x: 683, y: 342}
   m_MaxSize: {x: 12008, y: 8042}
   vertical: 0
-  controlID: 22
+  controlID: 9
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -362,9 +362,9 @@ MonoBehaviour:
   m_PersistentViewDataDictionary: {fileID: 0}
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: b20c0000
-    m_LastClickedID: 3250
-    m_ExpandedIDs: f0fbffff00000000260c00005c0c0000680c0000760c00009c0c0000a60c0000de0c0000
+    m_SelectedIDs: 700c0000
+    m_LastClickedID: 3184
+    m_ExpandedIDs: f8c8f6ff36cff7ff9a1ff8ff3c20f8ff7220f8fff0fbffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -414,14 +414,14 @@ MonoBehaviour:
     height: 581
   m_PersistentViewDataDictionary: {fileID: 0}
   m_SceneLighting: 1
-  lastFramingTime: 19315.848877023986
+  lastFramingTime: 8361.609028109915
   m_2DMode: 1
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 805.3806, y: 448.4329, z: -1.1833898}
+    m_Target: {x: 154.1829, y: 62.481075, z: -2.0019913}
     speed: 2
-    m_Value: {x: 805.3806, y: 448.4329, z: -1.1833898}
+    m_Value: {x: 154.1829, y: 62.481075, z: -2.0019913}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -453,9 +453,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 249.23334
+    m_Target: 254.46603
     speed: 2
-    m_Value: 249.23334
+    m_Value: 254.46603
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -504,19 +504,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Scripts/GUI
+    - Assets/Material
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scripts/GUI
+  - Assets/Material
   m_LastFoldersGridSize: -1
   m_LastProjectPath: D:\Dev\BachelorGit\Bachelor
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: ca090000
-    m_LastClickedID: 2506
+    m_SelectedIDs: 920b0000
+    m_LastClickedID: 2962
     m_ExpandedIDs: 00000000ec08000038090000620a000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -570,10 +570,10 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: c8070000
-    m_LastClickedInstanceID: 1992
+    m_SelectedInstanceIDs: 760c0000
+    m_LastClickedInstanceID: 3190
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: 3c26000090270000822600009e280000c4270000c426000076270000460b0000
+    m_ExpandedInstanceIDs: 3c26000090270000822600009e280000c4270000c426000076270000460b0000520b0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

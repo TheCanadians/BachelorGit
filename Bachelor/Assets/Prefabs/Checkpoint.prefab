@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 120688662686122868}
   m_Layer: 0
   m_Name: Checkpoint
-  m_TagString: Untagged
+  m_TagString: Checkpoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -36,8 +36,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1644802025739996}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -22.01, y: -12.9800005, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -22, y: -13, z: 0}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -53,8 +53,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f06d0f0bfd4183f4bb2e4e8695619103, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 3
-  fitnessValue: 1
+  radius: 50
+  fitnessValue: 0
   segments: 50
   xradius: 5
   yradius: 5

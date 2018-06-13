@@ -34,7 +34,7 @@ public class EvolutionManager : MonoBehaviour {
                 {
                     for (int i = 0; i < populationSize; i++)
                     {
-                        carList[i].CheckDistance(true);
+                        carList[i].CheckDistance();
                     }
                 }
                 nets.Sort();
@@ -81,6 +81,7 @@ public class EvolutionManager : MonoBehaviour {
         for (int i = 0; i < populationSize; i++)
         {
             CarMovement car = ((GameObject)Instantiate(carPrefab, carPrefab.transform.position, carPrefab.transform.rotation)).GetComponent<CarMovement>();
+            car.name = i.ToString();
             car.Init(nets[i]);
             carList.Add(car);
         }

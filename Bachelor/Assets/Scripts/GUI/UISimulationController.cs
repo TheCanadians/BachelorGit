@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections;
 
 public class UISimulationController : MonoBehaviour {
 
@@ -12,30 +13,44 @@ public class UISimulationController : MonoBehaviour {
     private Text GenerationCount;
     [SerializeField]
     private UINeuralNetworkPanel NeuralNetPanel;
+    [SerializeField]
+    private Sprite firstCar;
+    [SerializeField]
+    private Sprite normalCar;
 
-    private NeuralNetwork car;
+    private GameObject[] cars;
+    private NeuralNetwork[] carsNetwork;
     private EvolutionManager evoManager;
-
-    private bool activate = false;
 
     private void Start()
     {
-        car = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<CarMovement>().GetNeuralNetwork();
+        cars = GameObject.FindGameObjectsWithTag("Player");
+        carsNetwork = new NeuralNetwork[cars.Length];
+        NeuralNetwork car = cars[0].GetComponent<CarMovement>().GetNeuralNetwork();
         evoManager = GameObject.Find("EvolutionManager").GetComponent<EvolutionManager>();
     }
 
     private void Update()
     {
-        car = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<CarMovement>().GetNeuralNetwork();
-        evoManager = GameObject.Find("EvolutionManager").GetComponent<EvolutionManager>();
-        if(!activate)
+        GetReferences();
+        for (int i = 0; i < cars.Length; i++)
         {
-            NeuralNetPanel.Display(car);
-            activate = true;
+            carsNetwork[i] = cars[i].GetComponent<CarMovement>().GetNeuralNetwork();
         }
-            
+        NeuralNetwork[] carsNetworkCopy = carsNetwork;
 
-        Fitness.text = car.GetFitness().ToString();
+        Array.Sort(carsNetwork, CompareFitness);
+
+        ChangeCarColor();
+
+        NeuralNetPanel.Display(carsNetwork[carsNetwork.Length - 1]);
+
+        SetTexts();       
+    }
+
+    void SetTexts()
+    {
+        Fitness.text = carsNetwork[carsNetwork.Length - 1].GetFitness().ToString();
         GenerationCount.text = evoManager.GetGenerationCount().ToString();
 
         CarMovement carObject = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<CarMovement>();
@@ -43,6 +58,33 @@ public class UISimulationController : MonoBehaviour {
 
         InputTexts[0].text = carOutputValues[0].ToString();
         InputTexts[1].text = carOutputValues[1].ToString();
+    }
+
+    void GetReferences()
+    {
+        cars = GameObject.FindGameObjectsWithTag("Player");
+        carsNetwork = new NeuralNetwork[cars.Length];
+        evoManager = GameObject.Find("EvolutionManager").GetComponent<EvolutionManager>();
+    }
+
+    void ChangeCarColor()
+    {
+        for (int i = 0; i < cars.Length; i++)
+        {
+            if (cars[i].GetComponent<CarMovement>().GetNeuralNetwork().GetFitness() == carsNetwork[carsNetwork.Length - 1].GetFitness())
+            {
+                cars[i].GetComponent<SpriteRenderer>().sprite = firstCar;
+            }
+            else
+            {
+                cars[i].GetComponent<SpriteRenderer>().sprite = normalCar;
+            }
+        }
+    }
+
+    int CompareFitness (NeuralNetwork x, NeuralNetwork y)
+    {
+        return x.GetFitness().CompareTo(y.GetFitness());
     }
 
     public void Show()

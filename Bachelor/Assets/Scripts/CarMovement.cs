@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,8 +23,7 @@ public class CarMovement : MonoBehaviour {
     private Sensor[] sensors;
 
     private int currentCheckpoint = 1;
-    private Transform lastCheckpoint = null;
-    private Transform[] checkpoints;
+    private GameObject[] checkpoints;
 
     public float showFitnessLevel;
     public float showDistance;
@@ -37,8 +37,13 @@ public class CarMovement : MonoBehaviour {
         Physics.IgnoreLayerCollision(8, 8);
         sensors = GetComponentsInChildren<Sensor>();
 
-        GameObject parent = GameObject.Find("Checkpoints");
-        checkpoints = parent.GetComponentsInChildren<Transform>();
+        checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
+        Array.Sort(checkpoints, CompareObNames);
+    }
+
+    int CompareObNames (GameObject x, GameObject y)
+    {
+        return x.name.CompareTo(y.name);
     }
 
     private void FixedUpdate()
@@ -69,7 +74,7 @@ public class CarMovement : MonoBehaviour {
 
             this.transform.position += direction * velocity * Time.deltaTime;
 
-            CheckDistance(false);
+            CheckDistance();
             showFitnessLevel = net.GetFitness();
         }
     }
@@ -82,23 +87,27 @@ public class CarMovement : MonoBehaviour {
         }
     }
 
-    public void CheckDistance(bool end)
+    public void CheckDistance()
     {
         
+        // Get distance between last and next checkpoint
+        float distanceCheckpoints = Vector2.Distance(checkpoints[currentCheckpoint].transform.position, checkpoints[currentCheckpoint - 1].transform.position);
+        // Get distance between next checkpoint and car
+        float distanceCar = Vector2.Distance(transform.position, checkpoints[currentCheckpoint].transform.position);
+        // Get way completion percentage
+        float percentageWay = distanceCar / distanceCheckpoints;
+
+        // Set fitness
+        net.SetFitness(checkpoints[currentCheckpoint].GetComponent<Checkpoint>().fitnessValue - 1 + (1 / percentageWay));
+
         float distance = Vector2.Distance(transform.position, checkpoints[currentCheckpoint].transform.position);
         showDistance = distance;
-        if (distance < 50f)
+        if (distance < checkpoints[currentCheckpoint].GetComponent<Checkpoint>().radius)
         {
             if (currentCheckpoint < checkpoints.Length - 1)
             {
                 currentCheckpoint++;
-                net.AddFitness(1f);
             }
-        }
-        if (end)
-        {
-            fitness = 1f / distance;
-            net.AddFitness(fitness);
         }
     }
 
