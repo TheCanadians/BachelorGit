@@ -36,7 +36,7 @@ public class UINeuralNetworkPanel : MonoBehaviour
         }
 
         this.Layers[Layers.Count - 1].SetNeuralNet(net);
-        this.Layers[Layers.Count - 1].Display(net.GetNeuronsInLayer(net.GetLayers().Length - 1));
+        this.Layers[Layers.Count - 1].Display(net.GetLayers().Length - 1);
 
         StartCoroutine(DrawConnections(net));
     }

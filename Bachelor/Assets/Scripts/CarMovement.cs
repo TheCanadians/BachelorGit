@@ -29,6 +29,8 @@ public class CarMovement : MonoBehaviour {
     public float showDistance;
     private float fitness = 0f;
 
+    private float[] sensorOutputs;
+
     private void Start()
     {
         rBody = GetComponent<Rigidbody2D>();
@@ -48,9 +50,10 @@ public class CarMovement : MonoBehaviour {
             {
                 sensorVals[i] = sensors[i].GetDistance();
             }
-            float[] output = net.FeedForward(sensorVals);
+            float[] outputs = net.FeedForward(sensorVals);
+            sensorOutputs = outputs;
 
-            velocity += (float)System.Math.Abs(output[0]) * acc * Time.deltaTime;
+            velocity += (float)System.Math.Abs(outputs[0]) * acc * Time.deltaTime;
 
             if (velocity > maxSpeed)
             {
@@ -58,7 +61,7 @@ public class CarMovement : MonoBehaviour {
             }
 
             rotation = transform.rotation;
-            rotation *= Quaternion.AngleAxis((float)-output[1] * turnSpeed * Time.deltaTime, new Vector3(0, 0, 1));
+            rotation *= Quaternion.AngleAxis((float)-outputs[1] * turnSpeed * Time.deltaTime, new Vector3(0, 0, 1));
 
             Vector3 direction = new Vector3(0, 1, 0);
             transform.rotation = rotation;
@@ -119,5 +122,10 @@ public class CarMovement : MonoBehaviour {
     public NeuralNetwork GetNeuralNetwork()
     {
         return net;
+    }
+
+    public float[] GetOutputValues()
+    {
+        return sensorOutputs;
     }
 }
