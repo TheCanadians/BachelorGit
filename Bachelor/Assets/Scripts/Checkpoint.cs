@@ -12,9 +12,9 @@ public class Checkpoint : MonoBehaviour
     [Range(0, 50)]
     public int segments = 50;
     [Range(0, 3)]
-    public float xradius = 3;
+    public float xradius = 4;
     [Range(0, 3)]
-    public float yradius = 3;
+    public float yradius = 4;
 
     LineRenderer line;
 

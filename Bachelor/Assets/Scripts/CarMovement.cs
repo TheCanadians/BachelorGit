@@ -45,6 +45,10 @@ public class CarMovement : MonoBehaviour {
 
         checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
         Array.Sort(checkpoints, CompareObNames);
+        for (int i = 0; i < checkpoints.Length; i++)
+        {
+            Debug.Log(checkpoints[i].name);
+        }
     }
 
     int CompareObNames (GameObject x, GameObject y)
