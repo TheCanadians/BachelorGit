@@ -18,6 +18,8 @@ public class UISimulationController : MonoBehaviour {
     [SerializeField]
     private Sprite firstCar;
     [SerializeField]
+    private Sprite secondCar;
+    [SerializeField]
     private Sprite normalCar;
 
     private GameObject[] cars;
@@ -54,8 +56,18 @@ public class UISimulationController : MonoBehaviour {
         Fitness.text = carsNetwork[carsNetwork.Length - 1].GetFitness().ToString();
         GenerationCount.text = evoManager.GetGenerationCount().ToString();
 
-        CarMovement carObject = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<CarMovement>();
-        float[] carOutputValues = carObject.GetOutputValues();
+        float[] carOutputValues = new float[2];
+
+        for (int i = 0; i < cars.Length; i++)
+        {
+            if (cars[i].GetComponent<CarMovement>().GetNeuralNetwork().GetFitness() == carsNetwork[carsNetwork.Length - 1].GetFitness())
+            {
+                carOutputValues = cars[i].GetComponent<CarMovement>().GetOutputValues();
+            }
+        }
+
+        //CarMovement carObject = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<CarMovement>();
+        //float[] carOutputValues = carObject.GetOutputValues();
 
         InputTexts[0].text = carOutputValues[0].ToString();
         InputTexts[1].text = carOutputValues[1].ToString();
@@ -76,6 +88,10 @@ public class UISimulationController : MonoBehaviour {
             {
                 cars[i].GetComponent<SpriteRenderer>().sprite = firstCar;
                 camera.GetComponent<CameraMovement>().SetTarget(cars[i]);
+            }
+            else if (cars[i].GetComponent<CarMovement>().GetNeuralNetwork().GetFitness() == carsNetwork[carsNetwork.Length - 2].GetFitness())
+            {
+                cars[i].GetComponent<SpriteRenderer>().sprite = secondCar;
             }
             else
             {

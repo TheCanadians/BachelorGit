@@ -45,10 +45,6 @@ public class CarMovement : MonoBehaviour {
 
         checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
         Array.Sort(checkpoints, CompareObNames);
-        for (int i = 0; i < checkpoints.Length; i++)
-        {
-            Debug.Log(checkpoints[i].name);
-        }
     }
 
     int CompareObNames (GameObject x, GameObject y)
@@ -108,6 +104,11 @@ public class CarMovement : MonoBehaviour {
         // Get way completion percentage
         float percentageWay = distanceCar / distanceCheckpoints;
 
+        if (percentageWay < 0)
+        {
+            percentageWay = 0f;
+        }
+
         // Set fitness
         net.SetFitness(checkpoints[currentCheckpoint].GetComponent<Checkpoint>().fitnessValue - 1 + (1 / percentageWay));
 
@@ -122,7 +123,7 @@ public class CarMovement : MonoBehaviour {
             }
             else
             {
-                net.SetFitness(checkpoints[currentCheckpoint].GetComponent<Checkpoint>().fitnessValue);
+                Die();
             }
         }
         else

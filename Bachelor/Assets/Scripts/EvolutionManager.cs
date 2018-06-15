@@ -16,6 +16,9 @@ public class EvolutionManager : MonoBehaviour {
     private List<NeuralNetwork> nets;
     private List<CarMovement> carList = null;
 
+    private static System.Random randomizer = new System.Random();
+    private float crossoverProbability = 0.5f;
+
     void StartTraining()
     {
         isTraining = false;
@@ -43,14 +46,13 @@ public class EvolutionManager : MonoBehaviour {
                 NeuralNetwork secBest = new NeuralNetwork(nets[nets.Count - 2]);
                 nets[nets.Count - 1] = new NeuralNetwork(best);
                 nets[nets.Count - 2] = new NeuralNetwork(secBest);
-                for (int i = 0; i < (populationSize/2)-1; i++)
+                for (int i = 0; i < populationSize-2; i++)
                 {
-                    nets[i] = new NeuralNetwork(best);
-                    nets[i + (populationSize / 2)-1] = new NeuralNetwork(secBest);
+                    NeuralNetwork newNet = Crossover(best, secBest);
+                    nets[i] = new NeuralNetwork(newNet);
+                    //nets[i + (populationSize / 2)-1] = new NeuralNetwork(secBest);
                     nets[i].Mutate();
-                    nets[i + (populationSize / 2)-1].Mutate();
-
-                    //nets[i + (populationSize / 2)] = new NeuralNetwork(nets[i + (populationSize / 2)]);
+                    //nets[i + (populationSize / 2)-1].Mutate();
                 }
 
                 for (int i = 0; i < populationSize; i++)
@@ -70,6 +72,35 @@ public class EvolutionManager : MonoBehaviour {
         {
             CheckAlive();
         }
+    }
+
+    private NeuralNetwork Crossover(NeuralNetwork a, NeuralNetwork b)
+    {
+        float[][][] aWeights = a.GetWeightsMatrix();
+        float[][][] bWeights = b.GetWeightsMatrix();
+        NeuralNetwork newNeuralNetwork = new NeuralNetwork(a);
+        float[][][] newWeights = aWeights;
+
+        for (int i = 0; i < aWeights.Length; i++)
+        {
+            for (int j = 0; j < aWeights[i].Length; j++)
+            {
+                for (int k = 0; k < aWeights[i][j].Length; k++)
+                {
+                    if (randomizer.Next() < crossoverProbability)
+                    {
+                        newWeights[i][j][k] = aWeights[i][j][k];
+                    }
+                    else
+                    {
+                        newWeights[i][j][k] = bWeights[i][j][k];
+                    }
+                }
+            }
+        }
+        newNeuralNetwork.SetWeightsMatrix(newWeights);
+
+        return newNeuralNetwork;
     }
 
     private void CheckAlive()

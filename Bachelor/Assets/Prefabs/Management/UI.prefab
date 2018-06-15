@@ -694,6 +694,7 @@ MonoBehaviour:
   GenerationCount: {fileID: 114078749011394746}
   NeuralNetPanel: {fileID: 114482033534322492}
   firstCar: {fileID: 21300000, guid: 3bd2eaf80f9a8c34791c311716c99de8, type: 3}
+  secondCar: {fileID: 21300000, guid: aaa0828e55bf37349a15c2dd5087e2d6, type: 3}
   normalCar: {fileID: 21300000, guid: 1261ff970a8d3a340bd05c49006bf044, type: 3}
 --- !u!114 &114629662057077720
 MonoBehaviour:

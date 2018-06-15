@@ -66,6 +66,10 @@ public class UINeuralNetworkWeightPanel : MonoBehaviour {
         {
             sizeDelta.x = 1;
         }
+        else if (sizeDelta.x > 3f)
+        {
+            sizeDelta.x = 3;
+        }
 
         if (weight >= 0)
         {

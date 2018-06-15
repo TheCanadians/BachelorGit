@@ -9,6 +9,10 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
     private float[][][] weights; // number of weights per neuron
     private float fitness; // fitness value of the network
 
+    private const float mutationProbability = 0.25f;
+    private const float mutationAmount = 2f;
+    private static System.Random randomizer = new System.Random();
+
     public NeuralNetwork(int[] layers)
     {
         this.layers = new int[layers.Length];
@@ -137,30 +141,10 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
                 {
                     float weight = weights[i][j][k];
 
-                    // random number to check if to mutate weight
-                    float randomNum = UnityEngine.Random.Range(0f, 100f);
-
-                    if (randomNum <= 3f)
+                    if (randomizer.NextDouble() <= mutationProbability)
                     {
-                        // flip sign
-                        weight *= -1;
-                    }
-                    else if (randomNum <= 6f)
-                    {
-                        // new weight
-                        weight = UnityEngine.Random.Range(-1f, 1f);
-                    }
-                    else if (randomNum <= 9f)
-                    {
-                        // increase weight
-                        float factor = UnityEngine.Random.Range(0f, 1.5f) + 1f;
-                        weight *= factor;
-                    }
-                    else if (randomNum <= 12f)
-                    {
-                        // decrease weight
-                        float factor = UnityEngine.Random.Range(0f, 1.5f);
-                        weight *= factor;
+                        // Mutate by random amount in range [-mutationAmount, mutationAmount]
+                        weight += (float)(randomizer.NextDouble() * (mutationAmount * 2) - mutationAmount);
                     }
                     weights[i][j][k] = weight;
                 }
@@ -216,5 +200,10 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
     public float[][][] GetWeightsMatrix()
     {
         return weights;
+    }
+
+    public void SetWeightsMatrix(float[][][] weights)
+    {
+        this.weights = weights;
     }
 }
