@@ -50,9 +50,7 @@ public class EvolutionManager : MonoBehaviour {
                 {
                     NeuralNetwork newNet = Crossover(best, secBest);
                     nets[i] = new NeuralNetwork(newNet);
-                    //nets[i + (populationSize / 2)-1] = new NeuralNetwork(secBest);
                     nets[i].Mutate();
-                    //nets[i + (populationSize / 2)-1].Mutate();
                 }
 
                 for (int i = 0; i < populationSize; i++)

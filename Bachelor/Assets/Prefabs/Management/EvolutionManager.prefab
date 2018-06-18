@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e4b1bfa7ed82474aa44c49e7bff224c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carPrefab: {fileID: 1981868725498934, guid: 6d1271dd8f3998a458b74253b22ac9a3, type: 2}
+  carPrefab: {fileID: 1847831396462266, guid: 66b94bd04be724c48bcfed582a2fe52c, type: 2}
   timer: 500
   populationSize: 15
-  layers: 03000000050000000500000002000000
+  layers: 05000000050000000500000002000000
