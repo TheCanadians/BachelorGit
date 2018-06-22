@@ -16,6 +16,8 @@ public class UISimulationController : MonoBehaviour {
     [SerializeField]
     private UINeuralNetworkPanel NeuralNetPanel;
     [SerializeField]
+    private UINeuralNetworkGraph NeuralNetGraph;
+    [SerializeField]
     private Sprite firstCar;
     [SerializeField]
     private Sprite secondCar;
@@ -47,6 +49,7 @@ public class UISimulationController : MonoBehaviour {
         ChangeCarColor();
 
         NeuralNetPanel.Display(carsNetwork[carsNetwork.Length - 1]);
+        //NeuralNetGraph.Position();
 
         SetTexts();       
     }
@@ -66,11 +69,10 @@ public class UISimulationController : MonoBehaviour {
             }
         }
 
-        //CarMovement carObject = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<CarMovement>();
-        //float[] carOutputValues = carObject.GetOutputValues();
-
         InputTexts[0].text = carOutputValues[0].ToString();
         InputTexts[1].text = carOutputValues[1].ToString();
+        InputTexts[2].text = evoManager.averageFitness.ToString() + "%";
+        InputTexts[3].text = evoManager.bestFitness.ToString();
     }
 
     void GetReferences()

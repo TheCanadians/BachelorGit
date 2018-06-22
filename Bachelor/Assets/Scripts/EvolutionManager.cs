@@ -17,7 +17,17 @@ public class EvolutionManager : MonoBehaviour {
     private List<CarMovement> carList = null;
 
     private static System.Random randomizer = new System.Random();
-    private float crossoverProbability = 0.5f;
+    private float crossoverProbability = 0.1f;
+
+    public int averageFitness = 0;
+    public float bestFitness = 0f;
+
+    UINeuralNetworkGraph neuralGraph;
+
+    private void Start()
+    {
+        //neuralGraph = GameObject.Find("NeuralNetworkDiagramm").GetComponent<UINeuralNetworkGraph>();
+    }
 
     void StartTraining()
     {
@@ -44,9 +54,9 @@ public class EvolutionManager : MonoBehaviour {
                 nets.Sort();
                 NeuralNetwork best = new NeuralNetwork(nets[nets.Count - 1]);
                 NeuralNetwork secBest = new NeuralNetwork(nets[nets.Count - 2]);
-                nets[nets.Count - 1] = new NeuralNetwork(best);
-                nets[nets.Count - 2] = new NeuralNetwork(secBest);
-                for (int i = 0; i < populationSize-2; i++)
+                //nets[nets.Count - 1] = new NeuralNetwork(best);
+                //nets[nets.Count - 2] = new NeuralNetwork(secBest);
+                for (int i = 0; i < populationSize; i++)
                 {
                     NeuralNetwork newNet = Crossover(best, secBest);
                     nets[i] = new NeuralNetwork(newNet);
@@ -79,12 +89,25 @@ public class EvolutionManager : MonoBehaviour {
         NeuralNetwork newNeuralNetwork = new NeuralNetwork(a);
         float[][][] newWeights = aWeights;
 
+        int splitPointA = Random.Range(0, aWeights.Length);
+        int splitPointB = Random.Range(0, aWeights[splitPointA].Length);
+        int splitPointC = Random.Range(0, aWeights[splitPointA][splitPointB].Length);
+
         for (int i = 0; i < aWeights.Length; i++)
         {
             for (int j = 0; j < aWeights[i].Length; j++)
             {
                 for (int k = 0; k < aWeights[i][j].Length; k++)
                 {
+                    if (i >= splitPointA && j >= splitPointB && k >= splitPointC)
+                    {
+                        newWeights[i][j][k] = bWeights[i][j][k];
+                    }
+                    else
+                    {
+                        newWeights[i][j][k] = aWeights[i][j][k];
+                    }
+                    /*
                     if (randomizer.Next() < crossoverProbability)
                     {
                         newWeights[i][j][k] = aWeights[i][j][k];
@@ -93,6 +116,7 @@ public class EvolutionManager : MonoBehaviour {
                     {
                         newWeights[i][j][k] = bWeights[i][j][k];
                     }
+                    */
                 }
             }
         }
@@ -113,11 +137,56 @@ public class EvolutionManager : MonoBehaviour {
             if (deathCounter == carList.Count)
             {
                 isSpawning = false;
+
+                averageFitness = GetAverageFitness();
+                bestFitness = GetBestCar();
+                //neuralGraph.AddAverageCar(GetAverageFitness());
+                //neuralGraph.AddBestCar(GetBestCar());
+                //neuralGraph.Position();
+
                 Invoke("StartTraining", 1f);
             }
         }
     }
-    
+
+    private int GetAverageFitness()
+    {
+        float averageFitness = 0;
+        for (int i = 0; i < carList.Count; i++)
+        {
+            NeuralNetwork carNetwork = carList[i].GetNeuralNetwork();
+            averageFitness += carNetwork.GetFitness();
+        }
+        int numberOfCheckpoints = GameObject.FindGameObjectsWithTag("Checkpoint").Length;
+        Debug.Log("average fitness: " + averageFitness + "   float fitness: " + (averageFitness / carList.Count) / numberOfCheckpoints + "   int fitness: " + (int)(averageFitness / carList.Count) / numberOfCheckpoints);
+        return (int)(averageFitness / carList.Count) / numberOfCheckpoints;
+    }
+
+    private float GetBestCar()
+    {
+        float bestCar = 0f;
+        NeuralNetwork[] carsNetworks = new NeuralNetwork[carList.Count];
+        for (int i = 0; i < carList.Count; i++)
+        {
+            carsNetworks[i] = carList[i].GetNeuralNetwork();
+        }
+        System.Array.Sort(carsNetworks, CompareFitness);
+        bestCar = carsNetworks[carsNetworks.Length - 1].GetFitness();
+        if (bestCar > bestFitness)
+        {
+            return bestCar;
+        }
+        else
+        {
+            return bestFitness;
+        }
+    }
+
+    int CompareFitness(NeuralNetwork x, NeuralNetwork y)
+    {
+        return x.GetFitness().CompareTo(y.GetFitness());
+    }
+
     private void CreateCars()
     {
         if (carList != null)

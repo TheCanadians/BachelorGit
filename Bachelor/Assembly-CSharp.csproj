@@ -78,6 +78,7 @@
     <Compile Include="Assets\Scripts\EvolutionManager.cs" />
     <Compile Include="Assets\Scripts\GUI\UIController.cs" />
     <Compile Include="Assets\Scripts\GUI\UINeuralNetLayerPanel.cs" />
+    <Compile Include="Assets\Scripts\GUI\UINeuralNetworkGraph.cs" />
     <Compile Include="Assets\Scripts\GUI\UINeuralNetworkPanel.cs" />
     <Compile Include="Assets\Scripts\GUI\UINeuralNetworkWeightPanel.cs" />
     <Compile Include="Assets\Scripts\GUI\UISimulationController.cs" />

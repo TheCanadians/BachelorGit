@@ -164,3 +164,8 @@ D:\Dev\BachelorGit\Bachelor\Temp\bin\Debug\UnityEngine.SpatialTracking.xml
 D:\Dev\BachelorGit\Bachelor\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 D:\Dev\BachelorGit\Bachelor\obj\Debug\Assembly-CSharp.dll
 D:\Dev\BachelorGit\Bachelor\obj\Debug\Assembly-CSharp.pdb
+D:\Dev\BachelorGit\Bachelor\Temp\bin\Debug\KdTreeLib.dll
+D:\Dev\BachelorGit\Bachelor\Temp\bin\Debug\pb_Stl.dll
+D:\Dev\BachelorGit\Bachelor\Temp\bin\Debug\Poly2Tri.dll
+D:\Dev\BachelorGit\Bachelor\Temp\bin\Debug\ProBuilderCore-Unity5.dll
+D:\Dev\BachelorGit\Bachelor\Temp\bin\Debug\ProBuilderMeshOps-Unity5.dll

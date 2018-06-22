@@ -5646,24 +5646,6 @@ Prefab:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114580693330429488, guid: b312a331172d017438e74e0d362148b5,
-        type: 2}
-      propertyPath: firstCar
-      value: 
-      objectReference: {fileID: 21300000, guid: 8f8f2ce276140c74dbbb8b75646fe1c0,
-        type: 3}
-    - target: {fileID: 114580693330429488, guid: b312a331172d017438e74e0d362148b5,
-        type: 2}
-      propertyPath: secondCar
-      value: 
-      objectReference: {fileID: 21300000, guid: e13634c11a4c9ec47b571fe9088a7fde,
-        type: 3}
-    - target: {fileID: 114580693330429488, guid: b312a331172d017438e74e0d362148b5,
-        type: 2}
-      propertyPath: normalCar
-      value: 
-      objectReference: {fileID: 21300000, guid: 5093319e5e5173a489828ae2ea25e0db,
-        type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b312a331172d017438e74e0d362148b5, type: 2}
   m_IsPrefabParent: 0
