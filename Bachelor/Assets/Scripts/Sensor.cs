@@ -15,9 +15,12 @@ public class Sensor : MonoBehaviour {
 
     private float distance;
 
+    private PublicManager pM;
+
     private void Start()
     {
         EndPoint.gameObject.SetActive(true);
+        pM = GameObject.Find("PublicManager").GetComponent<PublicManager>();
     }
 
     private void FixedUpdate()
@@ -36,6 +39,8 @@ public class Sensor : MonoBehaviour {
         }
 
         distance = wallHit.distance;
+        float noise = Random.Range(pM.minNoise, pM.maxNoise);
+        distance += noise;
         // Set EndPoint position to raycast hit position
         EndPoint.transform.position = (Vector2)this.transform.position + sensorDirection * wallHit.distance;
     }

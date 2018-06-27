@@ -10,12 +10,17 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
     private float fitness; // fitness value of the network
     public float score = 0f;
 
+    private PublicManager pM = GameObject.Find("PublicManager").GetComponent<PublicManager>();
+    public String activationFnc;
+
     public float mutationProbability = 0.01f;
     public float mutationAmount = 2f;
     private static System.Random randomizer = new System.Random();
 
+
     public NeuralNetwork(int[] layers)
     {
+        activationFnc = pM.activationFnc.ToString();
         this.layers = new int[layers.Length];
         for (int i = 0; i < layers.Length; i++)
         {
@@ -29,6 +34,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
 
     public NeuralNetwork(NeuralNetwork copyNetwork)
     {
+        activationFnc = pM.activationFnc.ToString();
         this.layers = new int[copyNetwork.layers.Length];
         for (int i = 0; i < copyNetwork.layers.Length; i++)
         {
@@ -123,8 +129,9 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
                     // sum all weights connected from previous layers neurons to this neuron
                     value += weights[i - 1][j][k] * neurons[i - 1][k];
                 }
-                // Hyerbolic tangent activation
-                neurons[i][j] = (float)Math.Tanh(value);
+                if (activationFnc == "Sigmoid") neurons[i][j] = (float)SigmoidFunction(value);
+                else if (activationFnc == "TanH") neurons[i][j] = (float)TanHFunction(value);
+                else if (activationFnc == "SoftSign") neurons[i][j] = (float)SoftSignFunction(value);
             }
         }
         // return output values
@@ -151,6 +158,27 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
                 }
             }
         }
+    }
+
+    private static double SigmoidFunction(double value)
+    {
+        if (value > 10) return 1.0;
+        else if (value < -10) return 0.0;
+        else return 1.0 / (1.0 + Math.Exp(-value));
+        //return 1.0 / (1.0 + Math.Exp(-value));
+    }
+
+    private static double TanHFunction(double value)
+    {
+        if (value > 10) return 1.0;
+        if (value < -10) return -1.0;
+        else return Math.Tanh(value);
+        //return Math.Tanh(value);
+    }
+
+    private static double SoftSignFunction(double value)
+    {
+        return value / (1 + Math.Abs(value));
     }
 
     public void AddFitness(float fitnessValue)

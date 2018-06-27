@@ -12945,12 +12945,15 @@ MonoBehaviour:
   acceleration: 1
   maxSpeed: 5
   timeToDeath: 5
+  maxNoise: 1.02
+  minNoise: -1.22
+  activationFnc: 2
+  layers: 0500000007000000050000000300000002000000
   mutationProbability: 0.02
   mutationAmount: 1.5
   population: 20
-  crossoverProbability: 0.1
-  layers: 0500000007000000050000000300000002000000
   crossType: 1
+  crossoverProbability: 0.1
 --- !u!4 &1570557859
 Transform:
   m_ObjectHideFlags: 0
