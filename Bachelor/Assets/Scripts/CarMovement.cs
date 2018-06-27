@@ -37,8 +37,16 @@ public class CarMovement : MonoBehaviour {
 
     public bool isAlive = true;
 
+    private PublicManager publicManager;
+
     private void Start()
     {
+        publicManager = GameObject.Find("PublicManager").GetComponent<PublicManager>();
+        this.maxSpeed = publicManager.maxSpeed;
+        this.acc = publicManager.acceleration;
+        this.turnSpeed = publicManager.turnSpeed;
+        this.maxTime = publicManager.timeToDeath;
+
         rBody = GetComponent<Rigidbody2D>();
         Physics.IgnoreLayerCollision(8, 8);
         sensors = GetComponentsInChildren<Sensor>();
@@ -110,7 +118,7 @@ public class CarMovement : MonoBehaviour {
         }
 
         // Set fitness
-        net.SetFitness(checkpoints[currentCheckpoint].GetComponent<Checkpoint>().fitnessValue - 1 + (1 / percentageWay));
+        net.SetFitness(checkpoints[currentCheckpoint].GetComponent<Checkpoint>().fitnessValue + (1 / percentageWay));
 
         float distance = Vector2.Distance(transform.position, checkpoints[currentCheckpoint].transform.position);
         showDistance = distance;

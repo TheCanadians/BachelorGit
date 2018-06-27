@@ -8,9 +8,10 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
     private float[][] neurons; // number of neurons per layer
     private float[][][] weights; // number of weights per neuron
     private float fitness; // fitness value of the network
+    public float score = 0f;
 
-    private const float mutationProbability = 0.05f;
-    private const float mutationAmount = 2f;
+    public float mutationProbability = 0.01f;
+    public float mutationAmount = 2f;
     private static System.Random randomizer = new System.Random();
 
     public NeuralNetwork(int[] layers)

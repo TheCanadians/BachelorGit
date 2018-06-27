@@ -18,15 +18,21 @@ public class EvolutionManager : MonoBehaviour {
 
     private static System.Random randomizer = new System.Random();
     private float crossoverProbability = 0.1f;
+    private string crossoverType = "Pooling";
 
     public int averageFitness = 0;
     public float bestFitness = 0f;
 
     UINeuralNetworkGraph neuralGraph;
+    PublicManager publicManager;
 
     private void Start()
     {
         //neuralGraph = GameObject.Find("NeuralNetworkDiagramm").GetComponent<UINeuralNetworkGraph>();
+        publicManager = GameObject.Find("PublicManager").GetComponent<PublicManager>();
+        this.populationSize = publicManager.population;
+        this.layers = publicManager.layers;
+        this.crossoverType = publicManager.crossType.ToString();
     }
 
     void StartTraining()
@@ -52,16 +58,39 @@ public class EvolutionManager : MonoBehaviour {
                     }
                 }
                 nets.Sort();
-                NeuralNetwork best = new NeuralNetwork(nets[nets.Count - 1]);
-                NeuralNetwork secBest = new NeuralNetwork(nets[nets.Count - 2]);
-                //nets[nets.Count - 1] = new NeuralNetwork(best);
-                //nets[nets.Count - 2] = new NeuralNetwork(secBest);
-                for (int i = 0; i < populationSize; i++)
+
+                List<NeuralNetwork> newNets = new List<NeuralNetwork>();
+
+                if (crossoverType == "Elitist")
                 {
-                    NeuralNetwork newNet = Crossover(best, secBest);
-                    nets[i] = new NeuralNetwork(newNet);
-                    nets[i].Mutate();
+                    NeuralNetwork parentA = new NeuralNetwork(nets[nets.Count - 1]);
+                    NeuralNetwork parentB = new NeuralNetwork(nets[nets.Count - 2]);
+
+                    for (int i = 0; i < populationSize; i++)
+                    {
+                        NeuralNetwork newNet = Crossover(parentA, parentB);
+
+                        newNet.Mutate();
+                        newNets.Add(new NeuralNetwork(newNet));
+                    }
                 }
+                else
+                {
+                    ImprovedPoolingCrossoverSetup(nets);
+
+                    for (int i = 0; i < populationSize; i++)
+                    {
+                        NeuralNetwork parentA = PickParent(nets);
+                        NeuralNetwork parentB = PickParent(nets);
+
+                        NeuralNetwork newNet = Crossover(parentA, parentB);
+
+                        newNet.Mutate();
+                        newNets.Add(new NeuralNetwork(newNet));
+                    }
+                }
+
+                nets = newNets;
 
                 for (int i = 0; i < populationSize; i++)
                 {
@@ -80,6 +109,36 @@ public class EvolutionManager : MonoBehaviour {
         {
             CheckAlive();
         }
+    }
+
+    private void ImprovedPoolingCrossoverSetup(List<NeuralNetwork> nets)
+    {
+        // sum up fitness
+        float sum = 0f;
+        for (int i = 0; i < nets.Count; i++)
+        {
+            sum += Mathf.Pow(nets[i].GetFitness(), 4);
+        }
+        // normalize fitness to value between 0 and 1
+        for (int j = 0; j < nets.Count; j++)
+        {
+            nets[j].score = Mathf.Pow(nets[j].GetFitness(), 4) / sum;
+        }
+    }
+
+    private NeuralNetwork PickParent(List<NeuralNetwork> nets)
+    {
+        int index = 0;
+        float r = Random.Range(0f, 1f);
+        float firstRandom = r;
+        while (r > 0)
+        {
+            r = r - nets[index].score;
+            //Debug.Log("First Random: " + firstRandom + "   current Value: " + r + "   score: " + nets[index].score + "   " + index + " / " + nets.Count);
+            index++;
+        }
+        index--;
+        return nets[index];
     }
 
     private NeuralNetwork Crossover(NeuralNetwork a, NeuralNetwork b)
@@ -107,16 +166,6 @@ public class EvolutionManager : MonoBehaviour {
                     {
                         newWeights[i][j][k] = aWeights[i][j][k];
                     }
-                    /*
-                    if (randomizer.Next() < crossoverProbability)
-                    {
-                        newWeights[i][j][k] = aWeights[i][j][k];
-                    }
-                    else
-                    {
-                        newWeights[i][j][k] = bWeights[i][j][k];
-                    }
-                    */
                 }
             }
         }
@@ -138,18 +187,15 @@ public class EvolutionManager : MonoBehaviour {
             {
                 isSpawning = false;
 
-                averageFitness = GetAverageFitness();
+                averageFitness = (int)GetAverageFitness();
                 bestFitness = GetBestCar();
-                //neuralGraph.AddAverageCar(GetAverageFitness());
-                //neuralGraph.AddBestCar(GetBestCar());
-                //neuralGraph.Position();
 
                 Invoke("StartTraining", 1f);
             }
         }
     }
 
-    private int GetAverageFitness()
+    private float GetAverageFitness()
     {
         float averageFitness = 0;
         for (int i = 0; i < carList.Count; i++)
@@ -158,8 +204,8 @@ public class EvolutionManager : MonoBehaviour {
             averageFitness += carNetwork.GetFitness();
         }
         int numberOfCheckpoints = GameObject.FindGameObjectsWithTag("Checkpoint").Length;
-        Debug.Log("average fitness: " + averageFitness + "   float fitness: " + (averageFitness / carList.Count) / numberOfCheckpoints + "   int fitness: " + (int)(averageFitness / carList.Count) / numberOfCheckpoints);
-        return (int)(averageFitness / carList.Count) / numberOfCheckpoints;
+        //Debug.Log("average fitness: " + averageFitness + "   float fitness: " + (averageFitness / carList.Count) / numberOfCheckpoints + "   int fitness: " + (int)(averageFitness / carList.Count) / numberOfCheckpoints);
+        return (float)((averageFitness / carList.Count) / numberOfCheckpoints) * 100;
     }
 
     private float GetBestCar()
@@ -221,6 +267,8 @@ public class EvolutionManager : MonoBehaviour {
         for (int i = 0; i < populationSize; i++)
         {
             NeuralNetwork net = new NeuralNetwork(layers);
+            net.mutationAmount = publicManager.mutationAmount;
+            net.mutationProbability = publicManager.mutationProbability;
             net.Mutate();
             nets.Add(net);
         }
