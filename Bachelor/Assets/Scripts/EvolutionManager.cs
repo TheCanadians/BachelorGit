@@ -19,6 +19,7 @@ public class EvolutionManager : MonoBehaviour {
     private static System.Random randomizer = new System.Random();
     private float crossoverProbability = 0.1f;
     private string crossoverType = "Pooling";
+    private int tournamentWinners;
 
     public int averageFitness = 0;
     public float bestFitness = 0f;
@@ -33,6 +34,7 @@ public class EvolutionManager : MonoBehaviour {
         this.populationSize = publicManager.population;
         this.layers = publicManager.layers;
         this.crossoverType = publicManager.crossType.ToString();
+        this.tournamentWinners = publicManager.numberOfTournamentWinners;
     }
 
     void StartTraining()
@@ -129,9 +131,9 @@ public class EvolutionManager : MonoBehaviour {
                 newNets.Add(new NeuralNetwork(newNet));
             }
         }
-        else
+        else if (crossoverType == "RouletteWheel")
         {
-            ImprovedPoolingCrossoverSetup(nets);
+            RouletteWheelSelection(nets);
 
             for (int i = 0; i < populationSize; i++)
             {
@@ -144,6 +146,79 @@ public class EvolutionManager : MonoBehaviour {
                 newNets.Add(new NeuralNetwork(newNet));
             }
         }
+        else if (crossoverType == "Rank")
+        {
+            RankSelection(nets);
+
+            for (int i = 0; i < populationSize; i++)
+            {
+                NeuralNetwork parentA = PickParent(nets);
+                NeuralNetwork parentB = PickParent(nets);
+
+                NeuralNetwork newNet = Crossover(parentA, parentB);
+
+                newNet.Mutate();
+                newNets.Add(new NeuralNetwork(newNet));
+            }
+        }
+        else if (crossoverType == "Tournament")
+        {
+            for (int i = 0; i < populationSize; i++)
+            {
+                NeuralNetwork parentA;
+                NeuralNetwork parentB;
+
+                List<int> numbersA = new List<int>(nets.Count);
+                List<int> numbersB = new List<int>(nets.Count);
+
+                for (int number = 0; number < populationSize; number++)
+                {
+                    numbersA.Add(number);
+                    numbersB.Add(number);
+                }
+
+                List<int> winnersA = new List<int>(tournamentWinners);
+                List<int> winnersB = new List<int>(tournamentWinners);
+
+                for (int j = 0; j < tournamentWinners; j++)
+                {
+                    int randomNumA = Random.Range(0, numbersA.Count);
+                    
+                    winnersA.Add(numbersA[randomNumA]);
+                    numbersA.RemoveAt(randomNumA);
+                    int randomNumB = Random.Range(0, numbersB.Count);
+                    winnersB.Add(numbersB[randomNumB]);
+                    numbersB.RemoveAt(randomNumB);
+                }
+
+                winnersA.Sort();
+                winnersB.Sort();
+
+                parentA = nets[winnersA[winnersA.Count - 1]];
+                parentB = nets[winnersB[winnersB.Count - 1]];
+
+                NeuralNetwork newNet = Crossover(parentA, parentB);
+
+                newNet.Mutate();
+                newNets.Add(new NeuralNetwork(newNet));
+            }
+        }
+        else if (crossoverType == "Random")
+        {
+            for (int i = 0; i < populationSize; i++)
+            {
+                int a = Random.Range(0, nets.Count - 1);
+                int b = Random.Range(0, nets.Count - 1);
+
+                NeuralNetwork parentA = new NeuralNetwork(nets[a]);
+                NeuralNetwork parentB = new NeuralNetwork(nets[b]);
+
+                NeuralNetwork newNet = Crossover(parentA, parentB);
+
+                newNet.Mutate();
+                newNets.Add(new NeuralNetwork(newNet));
+            }
+         }
 
         nets = newNets;
 
@@ -153,7 +228,7 @@ public class EvolutionManager : MonoBehaviour {
         }
     }
 
-    private void ImprovedPoolingCrossoverSetup(List<NeuralNetwork> nets)
+    private void RouletteWheelSelection(List<NeuralNetwork> nets)
     {
         // sum up fitness
         float sum = 0f;
@@ -165,6 +240,20 @@ public class EvolutionManager : MonoBehaviour {
         for (int j = 0; j < nets.Count; j++)
         {
             nets[j].score = Mathf.Pow(nets[j].GetFitness(), 4) / sum;
+        }
+    }
+
+    private void RankSelection(List<NeuralNetwork> nets)
+    {
+        float sum = 0f;
+        for (int i = 0; i < nets.Count; i++)
+        {
+            sum += i;
+        }
+        // normalize fitness to value between 0 and 1
+        for (int j = 0; j < nets.Count; j++)
+        {
+            nets[j].score = j / sum;
         }
     }
 

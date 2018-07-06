@@ -12947,12 +12947,13 @@ MonoBehaviour:
   timeToDeath: 5
   maxNoise: 1.02
   minNoise: -1.22
-  activationFnc: 2
+  activationFnc: 1
   layers: 0500000007000000050000000300000002000000
   mutationProbability: 0.02
   mutationAmount: 1.5
   population: 20
-  crossType: 1
+  crossType: 3
+  numberOfTournamentWinners: 8
   crossoverProbability: 0.1
 --- !u!4 &1570557859
 Transform:

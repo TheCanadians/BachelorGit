@@ -33,6 +33,8 @@ public class PublicManager : MonoBehaviour {
     [SerializeField]
     public CrossoverType crossType;
     [SerializeField]
+    public int numberOfTournamentWinners = 4;
+    [SerializeField]
     public float crossoverProbability = 0f;
 
     
@@ -48,7 +50,7 @@ public class PublicManager : MonoBehaviour {
     [SerializeField]
     public enum CrossoverType
     {
-        Elitist,Pooling
+        Elitist,RouletteWheel,Tournament,Rank,Random
     }
     
 }
