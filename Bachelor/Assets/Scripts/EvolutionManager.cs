@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using System.IO;
 
 public class EvolutionManager : MonoBehaviour {
 
@@ -18,11 +20,17 @@ public class EvolutionManager : MonoBehaviour {
 
     private static System.Random randomizer = new System.Random();
     private float crossoverProbability = 0.1f;
-    private string crossoverType = "Pooling";
+    private string crossoverType = "RouletteWheel";
     private int tournamentWinners;
+    private bool compareSelection;
+    private int stopNumber;
 
     public int averageFitness = 0;
     public float bestFitness = 0f;
+
+    private List<string> compareList = new List<string>();
+    private string textPath = "Assets/compare.txt";
+    private StreamWriter writer;
 
     UINeuralNetworkGraph neuralGraph;
     PublicManager publicManager;
@@ -35,6 +43,9 @@ public class EvolutionManager : MonoBehaviour {
         this.layers = publicManager.layers;
         this.crossoverType = publicManager.crossType.ToString();
         this.tournamentWinners = publicManager.numberOfTournamentWinners;
+        this.compareSelection = publicManager.compareSelection;
+        this.stopNumber = publicManager.stopGenerationNumber;
+        writer = new StreamWriter(textPath, true);
     }
 
     void StartTraining()
@@ -67,7 +78,7 @@ public class EvolutionManager : MonoBehaviour {
 
             isTraining = true;
             isSpawning = true;
-            Invoke("StartTraining", timer);
+            //Invoke("StartTraining", timer);
             CreateCars();
         }
         if (isSpawning)
@@ -319,6 +330,23 @@ public class EvolutionManager : MonoBehaviour {
 
                 averageFitness = (int)GetAverageFitness();
                 bestFitness = GetBestCar();
+
+                if (compareSelection)
+                {
+                    string compareString = generationNumber + ":   Best Car: " + bestFitness + "   Average Fitness: " + averageFitness + "   Selection Type: " + crossoverType;
+                    compareList.Add(compareString);
+
+                    if (generationNumber <= stopNumber)
+                    {
+                        writer.WriteLine(compareString);
+                    }
+                    else
+                    {
+                        writer.Close();
+                    }
+                }
+
+               
 
                 Invoke("StartTraining", 1f);
             }

@@ -36,6 +36,10 @@ public class PublicManager : MonoBehaviour {
     public int numberOfTournamentWinners = 4;
     [SerializeField]
     public float crossoverProbability = 0f;
+    [SerializeField]
+    public bool compareSelection = false;
+    [SerializeField]
+    public int stopGenerationNumber = 50;
 
     
 
