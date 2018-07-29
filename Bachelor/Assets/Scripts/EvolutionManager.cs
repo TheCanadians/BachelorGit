@@ -6,12 +6,13 @@ using System.IO;
 
 public class EvolutionManager : MonoBehaviour {
 
+    // normal car prefab
     public GameObject carPrefab;
 
-    public float timer = 20f;
     public int populationSize = 20;
     public int[] layers = new int[] {3, 5, 5, 2}; // Topology
 
+    public bool start = false;
     private bool isTraining = false;
     private bool isSpawning = true;
     private int generationNumber = 0;
@@ -19,10 +20,9 @@ public class EvolutionManager : MonoBehaviour {
     private List<CarMovement> carList = null;
 
     private static System.Random randomizer = new System.Random();
-    private float crossoverProbability = 0.1f;
-    private string crossoverType = "RouletteWheel";
+    public string selectionType = "RouletteWheel";
     private int tournamentWinners;
-    private bool compareSelection;
+    private bool logProgress;
     private int stopNumber;
 
     public int averageFitness = 0;
@@ -37,13 +37,13 @@ public class EvolutionManager : MonoBehaviour {
 
     private void Start()
     {
-        //neuralGraph = GameObject.Find("NeuralNetworkDiagramm").GetComponent<UINeuralNetworkGraph>();
+        // get user inputs
         publicManager = GameObject.Find("PublicManager").GetComponent<PublicManager>();
         this.populationSize = publicManager.population;
         this.layers = publicManager.layers;
-        this.crossoverType = publicManager.crossType.ToString();
+        this.selectionType = publicManager.selectionType.ToString();
         this.tournamentWinners = publicManager.numberOfTournamentWinners;
-        this.compareSelection = publicManager.compareSelection;
+        this.logProgress = publicManager.logProgress;
         this.stopNumber = publicManager.stopGenerationNumber;
         writer = new StreamWriter(textPath, true);
     }
@@ -63,41 +63,48 @@ public class EvolutionManager : MonoBehaviour {
          * 2.2.2. Make a new child                               -> Reproduction
          * 2.2.2.1. Crossover parents DNA to make new child
          * 2.2.2.2. Mutate new child
-         * 2.2.2.3. Back to 1.
+         * 2.2.2.3. Back to 2.1.
          */
 
 
-
-        if (isTraining == false)
+        if (start)
         {
-            InitNeuralNetworks();
-            Eval();
-            Select();
+            if (isTraining == false)
+            {
+                // Initiate Neural Networks once after the start of the simulation
+                InitNeuralNetworks();
+                // Evaluate fitness of generation
+                Eval();
+                // Select parents based on selection method
+                Select();
 
-            generationNumber++;
+                generationNumber++;
 
-            isTraining = true;
-            isSpawning = true;
-            //Invoke("StartTraining", timer);
-            CreateCars();
-        }
-        if (isSpawning)
-        {
-            CheckAlive();
+                isTraining = true;
+                isSpawning = true;
+                // Create new generation of cars
+                CreateCars();
+            }
+            if (isSpawning)
+            {
+                CheckAlive();
+            }
         }
     }
-
+    // Initiate neural networks for the population once
     private void InitNeuralNetworks()
     {
+        // initialize only once
         if (generationNumber == 0)
         {
+            // checks if the population size is even, if not sets it to 20 (default)
             if (populationSize % 2 != 0)
             {
                 populationSize = 20;
             }
 
             nets = new List<NeuralNetwork>();
-
+            // generates new random neural network and sets mutation settings, than mutates
             for (int i = 0; i < populationSize; i++)
             {
                 NeuralNetwork net = new NeuralNetwork(layers);
@@ -108,7 +115,7 @@ public class EvolutionManager : MonoBehaviour {
             }
         }
     }
-
+    // Evaluate the generation based on fitness scores
     private void Eval()
     {
         if (generationNumber != 0)
@@ -120,16 +127,19 @@ public class EvolutionManager : MonoBehaviour {
                     carList[i].CheckDistance();
                 }
             }
+            // sorts Array based on fitness, worst fitness score first, best fitness score last
             nets.Sort();
         }
 
     }
-
+    // Select parents based on chosen selection method
     private void Select()
     {
+        // generate new List for the new generation
         List<NeuralNetwork> newNets = new List<NeuralNetwork>();
-
-        if (crossoverType == "Elitist")
+        // Selection Type Elitist Selection.
+        // Chooses the two cars with the highest fitness score and generates a new generation from their Genes
+        if (selectionType == "Elitist" || selectionType == "Elitist Selection")
         {
             NeuralNetwork parentA = new NeuralNetwork(nets[nets.Count - 1]);
             NeuralNetwork parentB = new NeuralNetwork(nets[nets.Count - 2]);
@@ -142,7 +152,9 @@ public class EvolutionManager : MonoBehaviour {
                 newNets.Add(new NeuralNetwork(newNet));
             }
         }
-        else if (crossoverType == "RouletteWheel")
+        // Selection Type Roulette Wheel Selection.
+        // Chooses randomly two parents. Cars with higher fitness scores have a higher probability to be chosen
+        else if (selectionType == "RouletteWheel" || selectionType == "Roulette Wheel Selection")
         {
             RouletteWheelSelection(nets);
 
@@ -157,7 +169,9 @@ public class EvolutionManager : MonoBehaviour {
                 newNets.Add(new NeuralNetwork(newNet));
             }
         }
-        else if (crossoverType == "Rank")
+        // Selection Type Rank Selection
+        // Chosses randomly two parents. Cars with a higher rank (based on fitness scores) have a higher probability to be chosen. Works similar to roulette wheel selection.
+        else if (selectionType == "Rank" || selectionType == "Rank Selection")
         {
             RankSelection(nets);
 
@@ -172,7 +186,9 @@ public class EvolutionManager : MonoBehaviour {
                 newNets.Add(new NeuralNetwork(newNet));
             }
         }
-        else if (crossoverType == "Tournament")
+        // Selection Type Tournament Selection
+        // selects x cars randomly and choses the car with the highest fitness score as one parent. Do twice.
+        else if (selectionType == "Tournament" || selectionType == "Tournament Selection")
         {
             for (int i = 0; i < populationSize; i++)
             {
@@ -214,7 +230,9 @@ public class EvolutionManager : MonoBehaviour {
                 newNets.Add(new NeuralNetwork(newNet));
             }
         }
-        else if (crossoverType == "Random")
+        // Selection Type Random Selection
+        // Selects two parents completely randomly
+        else if (selectionType == "Random" || selectionType == "Random Selection")
         {
             for (int i = 0; i < populationSize; i++)
             {
@@ -238,7 +256,8 @@ public class EvolutionManager : MonoBehaviour {
             nets[i].SetFitness(0f);
         }
     }
-
+    // Adds the fitness values of all cars together and calculates each cars score as follows:
+    // score = fitnessValue / SUM(fitnessValuesOfAllCars)
     private void RouletteWheelSelection(List<NeuralNetwork> nets)
     {
         // sum up fitness
@@ -253,7 +272,8 @@ public class EvolutionManager : MonoBehaviour {
             nets[j].score = Mathf.Pow(nets[j].GetFitness(), 4) / sum;
         }
     }
-
+    // Adds the ranks of all cars together and calculates each cars score as follows:
+    // score = rank / SUM(RanksOfAllCars)
     private void RankSelection(List<NeuralNetwork> nets)
     {
         float sum = 0f;
@@ -267,7 +287,7 @@ public class EvolutionManager : MonoBehaviour {
             nets[j].score = j / sum;
         }
     }
-
+    // randomly picks a parent for Roulette Wheel and Rank Selection
     private NeuralNetwork PickParent(List<NeuralNetwork> nets)
     {
         int index = 0;
@@ -281,7 +301,7 @@ public class EvolutionManager : MonoBehaviour {
         index--;
         return nets[index];
     }
-
+    // Performs Crossover over the two parent cars. Splits the weights matrix at 3 points and interchanges the split arrays to generate a new child
     private NeuralNetwork Crossover(NeuralNetwork a, NeuralNetwork b)
     {
         float[][][] aWeights = a.GetWeightsMatrix();
@@ -314,7 +334,7 @@ public class EvolutionManager : MonoBehaviour {
 
         return newNeuralNetwork;
     }
-
+    // Check if all Cars have died. If all cars have dies restarts with new generation
     private void CheckAlive()
     {
         int deathCounter = 0;
@@ -327,18 +347,18 @@ public class EvolutionManager : MonoBehaviour {
             if (deathCounter == carList.Count)
             {
                 isSpawning = false;
-
+                
                 averageFitness = (int)GetAverageFitness();
                 bestFitness = GetBestCar();
-
-                if (compareSelection)
+                // logs the average fitness for every generation in a text file
+                if (logProgress)
                 {
-                    string compareString = generationNumber + ":   Best Car: " + bestFitness + "   Average Fitness: " + averageFitness + "   Selection Type: " + crossoverType;
-                    compareList.Add(compareString);
+                    string log = generationNumber + "   Average Fitness: " + averageFitness + "   Selection Type: " + selectionType;
+                    compareList.Add(log);
 
                     if (generationNumber <= stopNumber)
                     {
-                        writer.WriteLine(compareString);
+                        writer.WriteLine(log);
                     }
                     else
                     {
@@ -352,7 +372,7 @@ public class EvolutionManager : MonoBehaviour {
             }
         }
     }
-
+    // calculates the average fitness in percent for the last generation
     private float GetAverageFitness()
     {
         float averageFitness = 0;
@@ -364,7 +384,7 @@ public class EvolutionManager : MonoBehaviour {
         int numberOfCheckpoints = GameObject.FindGameObjectsWithTag("Checkpoint").Length;
         return (float)((averageFitness / carList.Count) / numberOfCheckpoints) * 100;
     }
-
+    // selects overall (over all generations) best fitness score
     private float GetBestCar()
     {
         float bestCar = 0f;
@@ -384,7 +404,7 @@ public class EvolutionManager : MonoBehaviour {
             return bestFitness;
         }
     }
-
+    // Create new Car Objects
     private void CreateCars()
     {
         if (carList != null)
@@ -405,12 +425,12 @@ public class EvolutionManager : MonoBehaviour {
             carList.Add(car);
         }
     }
-
+    // Compare function to compare two neural Networks by fitness
     int CompareFitness(NeuralNetwork x, NeuralNetwork y)
     {
         return x.GetFitness().CompareTo(y.GetFitness());
     }
-
+    // return generation Number
     public int GetGenerationCount()
     {
         return generationNumber;

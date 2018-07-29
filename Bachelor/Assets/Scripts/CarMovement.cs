@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CarMovement : MonoBehaviour {
 
+    // variables for the car movement and time till death of no checkpoint has been collected
     [SerializeField]
     private float maxSpeed = 5f;
     [SerializeField]
@@ -41,20 +42,21 @@ public class CarMovement : MonoBehaviour {
 
     private void Start()
     {
+        // Get the user set inputs
         publicManager = GameObject.Find("PublicManager").GetComponent<PublicManager>();
         this.maxSpeed = publicManager.maxSpeed;
         this.acc = publicManager.acceleration;
         this.turnSpeed = publicManager.turnSpeed;
         this.maxTime = publicManager.timeToDeath;
-
+        // Ignore Collision with other cars
         rBody = GetComponent<Rigidbody2D>();
         Physics.IgnoreLayerCollision(8, 8);
         sensors = GetComponentsInChildren<Sensor>();
-
+        // Sort Checkpoints
         checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
         Array.Sort(checkpoints, CompareObNames);
     }
-
+    // function to compare and sort the checkpoints by name
     int CompareObNames (GameObject x, GameObject y)
     {
         return x.name.CompareTo(y.name);
@@ -64,21 +66,23 @@ public class CarMovement : MonoBehaviour {
     {
         if (init == true)
         {
+            // get sensor values
             sensorVals = new float[sensors.Length];
             for (int i = 0; i < sensors.Length; i++)
             {
                 sensorVals[i] = sensors[i].GetDistance();
             }
+            // get neural network outputs
             float[] outputs = net.FeedForward(sensorVals);
             sensorOutputs = outputs;
-
+            // calculate velocity based on neural network outputs
             velocity += (float)System.Math.Abs(outputs[0]) * acc * Time.deltaTime;
-
+            // cap velocity at maxSpeed
             if (velocity > maxSpeed)
             {
                 velocity = maxSpeed;
             }
-
+            // calculate rotation based on neural network outputs
             rotation = transform.rotation;
             rotation *= Quaternion.AngleAxis((float)-outputs[1] * turnSpeed * Time.deltaTime, new Vector3(0, 0, 1));
 
@@ -87,13 +91,13 @@ public class CarMovement : MonoBehaviour {
             direction = rotation * direction;
 
             this.transform.position += direction * velocity * Time.deltaTime;
-
+            // Check Distance to next Checkpoint, if car dies because no checkpoint has been collected in the last x seconds and update fitness score
             CheckDistance();
             CheckTime();
             showFitnessLevel = net.GetFitness();
         }
     }
-
+    // On Collision with the wall object car stops all movement
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer == 9)
@@ -101,7 +105,7 @@ public class CarMovement : MonoBehaviour {
             Die();
         }
     }
-
+    // Check the distance between the car and the next checkpoint
     public void CheckDistance()
     {
         
@@ -139,20 +143,20 @@ public class CarMovement : MonoBehaviour {
             timeSinceCheckpoint += Time.deltaTime;
         }
     }
-
+    // Checks if the car hasn't collected a checkpoint in the last maxTime seconds
     private void CheckTime()
     {
         if (timeSinceCheckpoint >= maxTime) {
             Die();
         }
     }
-
+    // Initiate car, adds neural network to car object
     public void Init(NeuralNetwork net)
     {
         this.net = net;
         init = true;
     }
-
+    // Sets all movement to null
     public void Die()
     {
         velocity = 0;
@@ -164,12 +168,12 @@ public class CarMovement : MonoBehaviour {
         this.GetComponent<CarMovement>().enabled = false;
         isAlive = false;
     }
-
+    // return NeuralNetwork Object of chosen car
     public NeuralNetwork GetNeuralNetwork()
     {
         return net;
     }
-
+    // return sensor values
     public float[] GetOutputValues()
     {
         return sensorOutputs;

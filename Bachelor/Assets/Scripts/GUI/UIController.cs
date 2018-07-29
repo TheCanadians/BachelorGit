@@ -6,11 +6,20 @@ public class UIController : MonoBehaviour {
     private Canvas Canvas;
     private UISimulationController simulationUI;
 
+    public bool start = false;
+
     private void Awake()
     {
         Canvas = GetComponent<Canvas>();
         simulationUI = GetComponentInChildren<UISimulationController>(true);
+    }
 
-        simulationUI.Show();
+    private void Update()
+    {
+        if (start)
+        {
+            simulationUI.Show();
+            start = false;
+        }
     }
 }

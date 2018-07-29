@@ -39,15 +39,11 @@ public class Sensor : MonoBehaviour {
         }
 
         distance = wallHit.distance;
+        // Add noise between min and max Noise to distance to simulate reality better
         float noise = Random.Range(pM.minNoise, pM.maxNoise);
         distance += noise;
         // Set EndPoint position to raycast hit position
         EndPoint.transform.position = (Vector2)this.transform.position + sensorDirection * wallHit.distance;
-    }
-
-    public float GetDistance()
-    {
-        return distance;
     }
 
     // Help functions
@@ -60,5 +56,10 @@ public class Sensor : MonoBehaviour {
     public void Show()
     {
         EndPoint.gameObject.SetActive(true);
+    }
+    // Return distance
+    public float GetDistance()
+    {
+        return distance;
     }
 }

@@ -114,6 +114,7 @@
     <None Include="Assets\ProCore\ProBuilder\Shader\pb_NormalPreview.shader" />
     <None Include="Assets\ProCore\ProBuilder\Shader\pb_ScrollHighlight.shader" />
     <None Include="Assets\ProCore\ProBuilder\readme.txt" />
+    <None Include="Assets\compare.txt" />
     <None Include="Assets\ProCore\ProBuilder\Shader\pb_SmoothingPreview.shader" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>D:/Dev/BachelorGit/Bachelor/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>

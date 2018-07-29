@@ -28,6 +28,8 @@ public class UISimulationController : MonoBehaviour {
     private NeuralNetwork[] carsNetwork;
     private EvolutionManager evoManager;
 
+    public bool start = false;
+
     private void Start()
     {
         cars = GameObject.FindGameObjectsWithTag("Player");
@@ -37,21 +39,24 @@ public class UISimulationController : MonoBehaviour {
 
     private void Update()
     {
-        GetReferences();
-        for (int i = 0; i < cars.Length; i++)
+        if (start)
         {
-            carsNetwork[i] = cars[i].GetComponent<CarMovement>().GetNeuralNetwork();
-        }
-        NeuralNetwork[] carsNetworkCopy = carsNetwork;
+            GetReferences();
+            for (int i = 0; i < cars.Length; i++)
+            {
+                carsNetwork[i] = cars[i].GetComponent<CarMovement>().GetNeuralNetwork();
+            }
+            NeuralNetwork[] carsNetworkCopy = carsNetwork;
 
-        Array.Sort(carsNetwork, CompareFitness);
+            Array.Sort(carsNetwork, CompareFitness);
 
-        ChangeCarColor();
+            ChangeCarColor();
 
-        NeuralNetPanel.Display(carsNetwork[carsNetwork.Length - 1]);
-        //NeuralNetGraph.Position();
+            NeuralNetPanel.Display(carsNetwork[carsNetwork.Length - 1]);
+            //NeuralNetGraph.Position();
 
-        SetTexts();       
+            SetTexts();
+        }       
     }
 
     void SetTexts()

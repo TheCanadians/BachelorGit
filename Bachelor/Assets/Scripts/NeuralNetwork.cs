@@ -17,7 +17,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
     public float mutationAmount = 2f;
     private static System.Random randomizer = new System.Random();
 
-
+    // Initiate neural network (occurs only on simulation start
     public NeuralNetwork(int[] layers)
     {
         activationFnc = pM.activationFnc.ToString();
@@ -31,7 +31,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
         InitNeurons();
         InitWeights();
     }
-
+    // generate network based on given weights matrix
     public NeuralNetwork(NeuralNetwork copyNetwork)
     {
         activationFnc = pM.activationFnc.ToString();
@@ -45,7 +45,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
         InitWeights();
         CopyWeights(copyNetwork.weights);
     }
-
+    // copy all weights
     private void CopyWeights(float[][][] copyWeights)
     {
         for (int i = 0; i < weights.Length; i++)
@@ -159,7 +159,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
             }
         }
     }
-
+    // Sigmoid activation function
     private static double SigmoidFunction(double value)
     {
         if (value > 10) return 1.0;
@@ -167,7 +167,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
         else return 1.0 / (1.0 + Math.Exp(-value));
         //return 1.0 / (1.0 + Math.Exp(-value));
     }
-
+    // TanH activation function
     private static double TanHFunction(double value)
     {
         if (value > 10) return 1.0;
@@ -175,22 +175,22 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
         else return Math.Tanh(value);
         //return Math.Tanh(value);
     }
-
+    // Soft Sign activation function
     private static double SoftSignFunction(double value)
     {
         return value / (1 + Math.Abs(value));
     }
-
+    // Add x to fitness score
     public void AddFitness(float fitnessValue)
     {
         fitness += fitnessValue;
     }
-
+    // Set fitness score
     public void SetFitness(float fitnessValue)
     {
         fitness = fitnessValue;
     }
-
+    // return fitness score
     public float GetFitness()
     {
         return fitness;
@@ -214,23 +214,23 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
             return 0;
         }
     } 
-
+    // return layers array
     public int[] GetLayers()
     {
         return layers;
     }
-
+    // return number of neurons in layer x
     public int GetNeuronsInLayer(int layer)
     {
         int count = neurons[layer].Length;
         return count;
     }
-
+    // return weights matrix
     public float[][][] GetWeightsMatrix()
     {
         return weights;
     }
-
+    // set weights matrix
     public void SetWeightsMatrix(float[][][] weights)
     {
         this.weights = weights;
