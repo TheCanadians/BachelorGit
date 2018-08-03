@@ -67,7 +67,13 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
 
         for (int i = 0; i < layers.Length; i++) // every Neural Network layer
         {
-            neuronsList.Add(new float[layers[i]]); // add layer to List
+            if (i < layers.Length - 1) {
+                neuronsList.Add(new float[layers[i]+1]); // add layer to List; +1 for bias
+            }
+            else
+            {
+                neuronsList.Add(new float[layers[i]]); // add layer to List
+            }  
         }
 
         neurons = neuronsList.ToArray(); // convert List to Array
@@ -83,23 +89,43 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
         {
             List<float[]> weightsPerLayerList = new List<float[]>();
 
-            int neuronsInPrevLayer = layers[i - 1];
+            int neuronsInPrevLayer = layers[i - 1] + 1;
+
             //loop through all neurons in this layer
-            for (int j = 0; j < neurons[i].Length; j++)
+            if (i < layers.Length - 1)
             {
-                float[] neuronWeights = new float[neuronsInPrevLayer];
-
-                // loop over all neurons in the previous layer
-                for (int k = 0; k < neuronsInPrevLayer; k++)
+                for (int j = 0; j < neurons[i].Length - 1; j++)
                 {
-                    // set weights to random value between -0.5f and 0.5f
-                    neuronWeights[k] = UnityEngine.Random.Range(-1f, 1f);
+                    float[] neuronWeights = new float[neuronsInPrevLayer];
+
+                    // loop over all neurons in the previous layer
+                    for (int k = 0; k < neuronsInPrevLayer; k++)
+                    {
+                        // set weights to random value between -0.5f and 0.5f
+                        neuronWeights[k] = UnityEngine.Random.Range(-1f, 1f);
+                    }
+
+                    // add to List weightsPerLayerList
+                    weightsPerLayerList.Add(neuronWeights);
                 }
-
-                // add to List weightsPerLayerList
-                weightsPerLayerList.Add(neuronWeights);
             }
+            else
+            {
+                for (int j = 0; j < neurons[i].Length; j++)
+                {
+                    float[] neuronWeights = new float[neuronsInPrevLayer];
 
+                    // loop over all neurons in the previous layer
+                    for (int k = 0; k < neuronsInPrevLayer; k++)
+                    {
+                        // set weights to random value between -0.5f and 0.5f
+                        neuronWeights[k] = UnityEngine.Random.Range(-1f, 1f);
+                    }
+
+                    // add to List weightsPerLayerList
+                    weightsPerLayerList.Add(neuronWeights);
+                }
+            }
             // add weightsPerLayerList to weightsList and convert to Array
             weightsList.Add(weightsPerLayerList.ToArray());
         }
@@ -115,6 +141,10 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
         for (int i = 0; i < inputs.Length; i++)
         {
             neurons[0][i] = inputs[i];
+            if (i == inputs.Length - 1)
+            {
+                neurons[0][i + 1] = 1;
+            }
         }
 
         // loop over all neurons and compute neural net values
@@ -126,8 +156,16 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
 
                 for (int k = 0; k < neurons[i-1].Length; k++)
                 {
-                    // sum all weights connected from previous layers neurons to this neuron
-                    value += weights[i - 1][j][k] * neurons[i - 1][k];
+                    try
+                    {
+                        // sum all weights connected from previous layers neurons to this neuron
+                        value += weights[i - 1][j][k] * neurons[i - 1][k];
+                    }
+                    catch(System.IndexOutOfRangeException ex)
+                    {
+                        continue;
+                    }
+   
                 }
                 if (activationFnc == "Sigmoid") neurons[i][j] = (float)SigmoidFunction(value);
                 else if (activationFnc == "TanH") neurons[i][j] = (float)TanHFunction(value);

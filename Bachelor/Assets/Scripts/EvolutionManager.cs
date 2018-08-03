@@ -9,11 +9,11 @@ public class EvolutionManager : MonoBehaviour {
     // normal car prefab
     public GameObject carPrefab;
 
-    public int populationSize = 20;
-    public int[] layers = new int[] {3, 5, 5, 2}; // Topology
+    private int populationSize = 20;
+    private int[] layers; // Topology
 
     public bool start = false;
-    private bool isTraining = false;
+    public bool isTraining = false;
     private bool isSpawning = true;
     private int generationNumber = 0;
     private List<NeuralNetwork> nets;
@@ -32,19 +32,12 @@ public class EvolutionManager : MonoBehaviour {
     private string textPath = "Assets/compare.txt";
     private StreamWriter writer;
 
-    UINeuralNetworkGraph neuralGraph;
     PublicManager publicManager;
 
     private void Start()
     {
         // get user inputs
         publicManager = GameObject.Find("PublicManager").GetComponent<PublicManager>();
-        this.populationSize = publicManager.population;
-        this.layers = publicManager.layers;
-        this.selectionType = publicManager.selectionType.ToString();
-        this.tournamentWinners = publicManager.numberOfTournamentWinners;
-        this.logProgress = publicManager.logProgress;
-        this.stopNumber = publicManager.stopGenerationNumber;
         writer = new StreamWriter(textPath, true);
     }
 
@@ -71,6 +64,7 @@ public class EvolutionManager : MonoBehaviour {
         {
             if (isTraining == false)
             {
+                GetUserInput();
                 // Initiate Neural Networks once after the start of the simulation
                 InitNeuralNetworks();
                 // Evaluate fitness of generation
@@ -91,6 +85,16 @@ public class EvolutionManager : MonoBehaviour {
             }
         }
     }
+    private void GetUserInput()
+    {
+        this.populationSize = publicManager.population;
+        this.layers = publicManager.layers;
+        this.selectionType = publicManager.selectionType.ToString();
+        this.tournamentWinners = publicManager.numberOfTournamentWinners;
+        this.logProgress = publicManager.logProgress;
+        this.stopNumber = publicManager.stopGenerationNumber;
+    }
+
     // Initiate neural networks for the population once
     private void InitNeuralNetworks()
     {
@@ -434,5 +438,10 @@ public class EvolutionManager : MonoBehaviour {
     public int GetGenerationCount()
     {
         return generationNumber;
+    }
+    // Set generation Number
+    public void SetGenerationNumber(int newGenerationNumber)
+    {
+        generationNumber = newGenerationNumber;
     }
 }

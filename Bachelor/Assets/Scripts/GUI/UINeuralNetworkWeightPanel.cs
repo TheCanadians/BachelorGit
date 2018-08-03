@@ -18,15 +18,23 @@ public class UINeuralNetworkWeightPanel : MonoBehaviour {
         this.net = net;
     }
 
-    public void DisplayConnections(int neuronIndex, int currentLayer, UINeuralNetLayerPanel nextLayer)
+    public void DisplayConnections(int neuronIndex, int currentLayer, UINeuralNetLayerPanel nextLayer, bool biasLayer)
     {
         Image dummyWeight = Weights[0];
         dummyWeight.gameObject.SetActive(true);
         for (int i = Weights.Count; i < net.GetNeuronsInLayer(currentLayer + 1); i++)
         {
-            Image newWeight = Instantiate(dummyWeight);
-            newWeight.transform.SetParent(this.transform, false);
-            Weights.Add(newWeight);
+            if (biasLayer && i == net.GetNeuronsInLayer(currentLayer + 1) - 1)
+            {
+
+            }
+            else
+            {
+                Image newWeight = Instantiate(dummyWeight);
+                newWeight.transform.SetParent(this.transform, false);
+                Weights.Add(newWeight);
+            }
+
         }
 
         for (int i = this.Weights.Count - 1; i >= net.GetNeuronsInLayer(currentLayer + 1); i++)
@@ -57,37 +65,44 @@ public class UINeuralNetworkWeightPanel : MonoBehaviour {
 
     private void PositionConnection(Image connection, UINeuralNetworkWeightPanel otherNode, int nodeIndex, int connectedNodeIndex, float[][] weights)
     {
-        connection.transform.localPosition = Vector3.zero;
-
-        Vector2 sizeDelta = connection.rectTransform.sizeDelta;
-        float weight = weights[connectedNodeIndex][nodeIndex];
-        sizeDelta.x = (float)System.Math.Abs(weight * 2);
-        if (sizeDelta.x < 1)
+        try
         {
-            sizeDelta.x = 1;
-        }
-        else if (sizeDelta.x > 3f)
-        {
-            sizeDelta.x = 3;
-        }
+            connection.transform.localPosition = Vector3.zero;
 
-        if (weight >= 0)
-        {
-            connection.color = PositiveColor;
-        }
-        else
-        {
-            connection.color = NegativeColor;
-        }
-        Color var = connection.color;
-        var.a = 1f;
-        connection.color = var;
-        Vector2 connectionVector = this.transform.position - otherNode.transform.position;
-        sizeDelta.y = connectionVector.magnitude / GameObject.Find("UI").GetComponent<Canvas>().scaleFactor;
+            Vector2 sizeDelta = connection.rectTransform.sizeDelta;
+            float weight = weights[connectedNodeIndex][nodeIndex];
+            sizeDelta.x = (float)System.Math.Abs(weight * 2);
+            if (sizeDelta.x < 1)
+            {
+                sizeDelta.x = 1;
+            }
+            else if (sizeDelta.x > 3f)
+            {
+                sizeDelta.x = 3;
+            }
 
-        connection.rectTransform.sizeDelta = sizeDelta;
+            if (weight >= 0)
+            {
+                connection.color = PositiveColor;
+            }
+            else
+            {
+                connection.color = NegativeColor;
+            }
+            Color var = connection.color;
+            var.a = 1f;
+            connection.color = var;
+            Vector2 connectionVector = this.transform.position - otherNode.transform.position;
+            sizeDelta.y = connectionVector.magnitude / GameObject.Find("UI").GetComponent<Canvas>().scaleFactor;
 
-        float angle = Vector2.Angle(Vector2.up, connectionVector);
-        connection.transform.rotation = Quaternion.AngleAxis(angle, new Vector3(0, 0, 1));
+            connection.rectTransform.sizeDelta = sizeDelta;
+
+            float angle = Vector2.Angle(Vector2.up, connectionVector);
+            connection.transform.rotation = Quaternion.AngleAxis(angle, new Vector3(0, 0, 1));
+        }
+        catch(System.IndexOutOfRangeException ex)
+        {
+            
+        }
     }
 }

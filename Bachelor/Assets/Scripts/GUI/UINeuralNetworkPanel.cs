@@ -32,11 +32,11 @@ public class UINeuralNetworkPanel : MonoBehaviour
         {
             this.Layers[i].SetNeuralNet(net);
             int[] layers = net.GetLayers();
-            this.Layers[i].Display(i);
+            this.Layers[i].Display(i, true);
         }
 
         this.Layers[Layers.Count - 1].SetNeuralNet(net);
-        this.Layers[Layers.Count - 1].Display(net.GetLayers().Length - 1);
+        this.Layers[Layers.Count - 1].Display(net.GetLayers().Length - 1, false);
 
         StartCoroutine(DrawConnections(net));
     }
@@ -48,7 +48,14 @@ public class UINeuralNetworkPanel : MonoBehaviour
         int[] layers = net.GetLayers();
         for (int i = 0; i < this.Layers.Count - 1; i++)
         {
-            this.Layers[i].DisplayConnections(i, this.Layers[i + 1]);
+            if (i != this.Layers.Count -2)
+            {
+                this.Layers[i].DisplayConnections(i, this.Layers[i + 1], true);
+            }
+            else
+            {
+                this.Layers[i].DisplayConnections(i, this.Layers[i + 1], false);
+            }
         }
 
         this.Layers[this.Layers.Count - 1].HideAllConnections();

@@ -10,6 +10,7 @@ public class PublicManager : MonoBehaviour {
     public UIController uiCon;
     public UISimulationController uiSimCon;
     // inactive Gameobjects and layer Prefab
+    public GameObject simulationPanel;
     public InputField layer;
     public GameObject tournamentPanel;
     public GameObject stopAtGenerationPanel;
@@ -115,7 +116,7 @@ public class PublicManager : MonoBehaviour {
         uiCon.start = true;
         uiSimCon.start = true;
         // Deactivates GUI after start
-        GameObject.Find("SimulationPanel").SetActive(false);
+        simulationPanel.SetActive(false);
     }
     // Refreshes min Slider text value
     public void ChangeMinSliderText(Slider minSlider)
@@ -158,6 +159,7 @@ public class PublicManager : MonoBehaviour {
         for (int i = 2; i < numberOfLayers; i++)
         {
             InputField newLayer = Instantiate(layer, layer.transform.position, Quaternion.identity);
+            newLayer.interactable = true;
             newLayer.transform.SetParent(layersObject.transform, false);
             newLayer.transform.SetSiblingIndex(2);
         }
@@ -186,6 +188,28 @@ public class PublicManager : MonoBehaviour {
         else
         {
             stopAtGenerationPanel.SetActive(false);
+        }
+    }
+
+    public void OnPopulationChanged(InputField popSize)
+    {
+        int populationSize = int.Parse(popSize.text);
+        if (populationSize < 0)
+        {
+            popSize.text = Mathf.Abs(populationSize).ToString();
+        }
+        else if (populationSize > 80)
+        {
+            popSize.text = "80";
+        }
+    }
+
+    public void OnTournamentWinnerChanged(InputField tournamentWinners)
+    {
+        int numberWinners = int.Parse(tournamentWinners.text);
+        if (numberWinners < 0)
+        {
+            tournamentWinners.text = Mathf.Abs(numberWinners).ToString();
         }
     }
 }

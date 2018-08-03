@@ -16,8 +16,6 @@ public class UISimulationController : MonoBehaviour {
     [SerializeField]
     private UINeuralNetworkPanel NeuralNetPanel;
     [SerializeField]
-    private UINeuralNetworkGraph NeuralNetGraph;
-    [SerializeField]
     private Sprite firstCar;
     [SerializeField]
     private Sprite secondCar;
@@ -120,5 +118,49 @@ public class UISimulationController : MonoBehaviour {
     public void Hide()
     {
         gameObject.SetActive(false);
+    }
+
+    public void WipeOldNetwork()
+    {
+        // layer
+        foreach(Transform layer in NeuralNetPanel.transform)
+        {
+            // content
+            foreach(Transform content in layer)
+            {
+                // neurons
+                foreach(Transform neuron in content)
+                {
+                    // weight
+                    foreach (Transform weight in neuron)
+                    {
+                        if (layer.name == "Layer(Clone)")
+                        {
+                            Destroy(weight.gameObject);
+                        }
+                        else if (weight.name == "Weight(Clone)")
+                        {
+                            Destroy(weight.gameObject);
+                        }
+                    }
+                    if (layer.name == "Layer(Clone)")
+                    {
+                        Destroy(neuron.gameObject);
+                    }
+                    else if (neuron.name == "Neuron(Clone)")
+                    {
+                        Destroy(neuron.gameObject);
+                    }
+                }
+                if (layer.name == "Layer(Clone)")
+                {
+                    Destroy(content.gameObject);
+                }
+            }
+            if (layer.name == "Layer(Clone)")
+            {
+                Destroy(layer.gameObject);
+            }
+        }
     }
 }
