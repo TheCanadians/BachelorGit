@@ -91,7 +91,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
 
             int neuronsInPrevLayer = layers[i - 1] + 1;
 
-            //loop through all neurons in this layer
+            //loop through all neurons in this layer if it has a bias neuron
             if (i < layers.Length - 1)
             {
                 for (int j = 0; j < neurons[i].Length - 1; j++)
@@ -109,6 +109,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
                     weightsPerLayerList.Add(neuronWeights);
                 }
             }
+            //loop through all neurons in this layer if it has no bias neuron
             else
             {
                 for (int j = 0; j < neurons[i].Length; j++)

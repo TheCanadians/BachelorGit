@@ -59,7 +59,7 @@ public class UISimulationController : MonoBehaviour {
 
     void SetTexts()
     {
-        Fitness.text = carsNetwork[carsNetwork.Length - 1].GetFitness().ToString();
+        Fitness.text = carsNetwork[carsNetwork.Length - 1].GetFitness().ToString("#.0");
         GenerationCount.text = evoManager.GetGenerationCount().ToString();
 
         float[] carOutputValues = new float[2];
@@ -72,8 +72,8 @@ public class UISimulationController : MonoBehaviour {
             }
         }
 
-        InputTexts[0].text = carOutputValues[0].ToString();
-        InputTexts[1].text = carOutputValues[1].ToString();
+        InputTexts[0].text = carOutputValues[0].ToString("0.0");
+        InputTexts[1].text = carOutputValues[1].ToString("0.0");
         InputTexts[2].text = evoManager.averageFitness.ToString() + "%";
         InputTexts[3].text = evoManager.bestFitness.ToString();
     }

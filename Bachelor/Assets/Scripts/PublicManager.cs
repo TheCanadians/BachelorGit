@@ -77,7 +77,7 @@ public class PublicManager : MonoBehaviour {
         maxNoise = maxNoiseSlider.value;
         InputField numberOfLayers = GameObject.Find("NumberOfLayersInput").GetComponent<InputField>();
         GameObject layersPanel = GameObject.Find("LayersPanel");
-        layers = new int[int.Parse(numberOfLayers.text)];
+        layers = new int[int.Parse(numberOfLayers.text) + 2];
         int index = -1;
         foreach(Transform child in layersPanel.transform)
         {
@@ -133,15 +133,15 @@ public class PublicManager : MonoBehaviour {
     {
         int numberOfLayers = int.Parse(layers.text);
         
-        if (numberOfLayers < 2)
+        if (numberOfLayers < 1)
         {
-            layers.text = "2";
-            numberOfLayers = 2;
+            layers.text = "1";
+            numberOfLayers = 1;
         }
-        if (numberOfLayers > 8)
+        if (numberOfLayers > 6)
         {
-            layers.text = "8";
-            numberOfLayers = 8;
+            layers.text = "6";
+            numberOfLayers = 6;
         }
 
         GameObject layersObject = GameObject.Find("LayersPanel");
@@ -149,14 +149,14 @@ public class PublicManager : MonoBehaviour {
         // Destroy old clones first
         foreach (Transform child in layersObject.transform)
         {
-            if (child.name == "InputLayer(Clone)")
+            if (child.name == "HiddenLayer(Clone)")
             {
                 GameObject.Destroy(child.gameObject);
             }
             
         }
         // Instantiate new input fields and set them in the hierarchy between input and output layer
-        for (int i = 2; i < numberOfLayers; i++)
+        for (int i = 1; i < numberOfLayers; i++)
         {
             InputField newLayer = Instantiate(layer, layer.transform.position, Quaternion.identity);
             newLayer.interactable = true;
@@ -190,7 +190,7 @@ public class PublicManager : MonoBehaviour {
             stopAtGenerationPanel.SetActive(false);
         }
     }
-
+    // Caps the population at 80 for performance reasons
     public void OnPopulationChanged(InputField popSize)
     {
         int populationSize = int.Parse(popSize.text);
@@ -203,7 +203,7 @@ public class PublicManager : MonoBehaviour {
             popSize.text = "80";
         }
     }
-
+    // Activates UI to select a number of tournament winners if Tournament Selection was as selection method picked
     public void OnTournamentWinnerChanged(InputField tournamentWinners)
     {
         int numberWinners = int.Parse(tournamentWinners.text);

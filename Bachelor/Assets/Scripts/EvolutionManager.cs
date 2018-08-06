@@ -40,12 +40,10 @@ public class EvolutionManager : MonoBehaviour {
         publicManager = GameObject.Find("PublicManager").GetComponent<PublicManager>();
         writer = new StreamWriter(textPath, true);
     }
-
     void StartTraining()
     {
         isTraining = false;
     }
-
     void Update()
     {
         /*
@@ -94,7 +92,6 @@ public class EvolutionManager : MonoBehaviour {
         this.logProgress = publicManager.logProgress;
         this.stopNumber = publicManager.stopGenerationNumber;
     }
-
     // Initiate neural networks for the population once
     private void InitNeuralNetworks()
     {
@@ -139,119 +136,27 @@ public class EvolutionManager : MonoBehaviour {
     // Select parents based on chosen selection method
     private void Select()
     {
-        // generate new List for the new generation
         List<NeuralNetwork> newNets = new List<NeuralNetwork>();
-        // Selection Type Elitist Selection.
-        // Chooses the two cars with the highest fitness score and generates a new generation from their Genes
         if (selectionType == "Elitist" || selectionType == "Elitist Selection")
         {
-            NeuralNetwork parentA = new NeuralNetwork(nets[nets.Count - 1]);
-            NeuralNetwork parentB = new NeuralNetwork(nets[nets.Count - 2]);
-
-            for (int i = 0; i < populationSize; i++)
-            {
-                NeuralNetwork newNet = Crossover(parentA, parentB);
-
-                newNet.Mutate();
-                newNets.Add(new NeuralNetwork(newNet));
-            }
+            newNets = ElitistSelection();
         }
-        // Selection Type Roulette Wheel Selection.
-        // Chooses randomly two parents. Cars with higher fitness scores have a higher probability to be chosen
         else if (selectionType == "RouletteWheel" || selectionType == "Roulette Wheel Selection")
         {
-            RouletteWheelSelection(nets);
-
-            for (int i = 0; i < populationSize; i++)
-            {
-                NeuralNetwork parentA = PickParent(nets);
-                NeuralNetwork parentB = PickParent(nets);
-
-                NeuralNetwork newNet = Crossover(parentA, parentB);
-
-                newNet.Mutate();
-                newNets.Add(new NeuralNetwork(newNet));
-            }
+            newNets = RouletteWheelSelection();
         }
-        // Selection Type Rank Selection
-        // Chosses randomly two parents. Cars with a higher rank (based on fitness scores) have a higher probability to be chosen. Works similar to roulette wheel selection.
         else if (selectionType == "Rank" || selectionType == "Rank Selection")
         {
-            RankSelection(nets);
-
-            for (int i = 0; i < populationSize; i++)
-            {
-                NeuralNetwork parentA = PickParent(nets);
-                NeuralNetwork parentB = PickParent(nets);
-
-                NeuralNetwork newNet = Crossover(parentA, parentB);
-
-                newNet.Mutate();
-                newNets.Add(new NeuralNetwork(newNet));
-            }
+            newNets = RankSelection();
         }
-        // Selection Type Tournament Selection
-        // selects x cars randomly and choses the car with the highest fitness score as one parent. Do twice.
         else if (selectionType == "Tournament" || selectionType == "Tournament Selection")
         {
-            for (int i = 0; i < populationSize; i++)
-            {
-                NeuralNetwork parentA;
-                NeuralNetwork parentB;
-
-                List<int> numbersA = new List<int>(nets.Count);
-                List<int> numbersB = new List<int>(nets.Count);
-
-                for (int number = 0; number < populationSize; number++)
-                {
-                    numbersA.Add(number);
-                    numbersB.Add(number);
-                }
-
-                List<int> winnersA = new List<int>(tournamentWinners);
-                List<int> winnersB = new List<int>(tournamentWinners);
-
-                for (int j = 0; j < tournamentWinners; j++)
-                {
-                    int randomNumA = Random.Range(0, numbersA.Count);
-                    
-                    winnersA.Add(numbersA[randomNumA]);
-                    numbersA.RemoveAt(randomNumA);
-                    int randomNumB = Random.Range(0, numbersB.Count);
-                    winnersB.Add(numbersB[randomNumB]);
-                    numbersB.RemoveAt(randomNumB);
-                }
-
-                winnersA.Sort();
-                winnersB.Sort();
-
-                parentA = nets[winnersA[winnersA.Count - 1]];
-                parentB = nets[winnersB[winnersB.Count - 1]];
-
-                NeuralNetwork newNet = Crossover(parentA, parentB);
-
-                newNet.Mutate();
-                newNets.Add(new NeuralNetwork(newNet));
-            }
+            newNets = TournamentSelection();
         }
-        // Selection Type Random Selection
-        // Selects two parents completely randomly
         else if (selectionType == "Random" || selectionType == "Random Selection")
         {
-            for (int i = 0; i < populationSize; i++)
-            {
-                int a = Random.Range(0, nets.Count - 1);
-                int b = Random.Range(0, nets.Count - 1);
-
-                NeuralNetwork parentA = new NeuralNetwork(nets[a]);
-                NeuralNetwork parentB = new NeuralNetwork(nets[b]);
-
-                NeuralNetwork newNet = Crossover(parentA, parentB);
-
-                newNet.Mutate();
-                newNets.Add(new NeuralNetwork(newNet));
-            }
-         }
+            newNets = RandomSelection();
+        }
 
         nets = newNets;
 
@@ -260,9 +165,145 @@ public class EvolutionManager : MonoBehaviour {
             nets[i].SetFitness(0f);
         }
     }
+    // Selection Type Roulette Wheel Selection.
+    // Chooses randomly two parents. Cars with higher fitness scores have a higher probability to be chosen
+    private List<NeuralNetwork> RouletteWheelSelection()
+    {
+        // generate new List for the new generation
+        List<NeuralNetwork> newNets = new List<NeuralNetwork>();
+        SetFitnessPercent(nets);
+
+        for (int i = 0; i < populationSize / 2; i++)
+        {
+            NeuralNetwork parentA = PickParent(nets);
+            NeuralNetwork parentB = PickParent(nets);
+
+            NeuralNetwork[] newNet = Crossover(parentA, parentB);
+
+            newNet[0].Mutate();
+            newNet[1].Mutate();
+            newNets.Add(new NeuralNetwork(newNet[0]));
+            newNets.Add(new NeuralNetwork(newNet[1]));
+        }
+        return newNets;
+    }
+    // Selection Type Rank Selection
+    // Chosses randomly two parents. Cars with a higher rank (based on fitness scores) have a higher probability to be chosen. Works similar to roulette wheel selection.
+    private List<NeuralNetwork> RankSelection()
+    {
+        // generate new List for the new generation
+        List<NeuralNetwork> newNets = new List<NeuralNetwork>();
+        SetRankPercent(nets);
+
+        for (int i = 0; i < populationSize / 2; i++)
+        {
+            NeuralNetwork parentA = PickParent(nets);
+            NeuralNetwork parentB = PickParent(nets);
+
+            NeuralNetwork[] newNet = Crossover(parentA, parentB);
+
+            newNet[0].Mutate();
+            newNet[1].Mutate();
+            newNets.Add(new NeuralNetwork(newNet[0]));
+            newNets.Add(new NeuralNetwork(newNet[1]));
+        }
+        return newNets;
+    }
+    // Selection Type Tournament Selection
+    // selects x cars randomly and choses the car with the highest fitness score as one parent. Do twice.
+    private List<NeuralNetwork> TournamentSelection()
+    {
+        // generate new List for the new generation
+        List<NeuralNetwork> newNets = new List<NeuralNetwork>();
+        for (int i = 0; i < populationSize / 2; i++)
+        {
+            NeuralNetwork parentA;
+            NeuralNetwork parentB;
+
+            List<int> numbersA = new List<int>(nets.Count);
+            List<int> numbersB = new List<int>(nets.Count);
+
+            for (int number = 0; number < populationSize; number++)
+            {
+                numbersA.Add(number);
+                numbersB.Add(number);
+            }
+
+            List<int> winnersA = new List<int>(tournamentWinners);
+            List<int> winnersB = new List<int>(tournamentWinners);
+
+            for (int j = 0; j < tournamentWinners; j++)
+            {
+                int randomNumA = Random.Range(0, numbersA.Count);
+
+                winnersA.Add(numbersA[randomNumA]);
+                numbersA.RemoveAt(randomNumA);
+                int randomNumB = Random.Range(0, numbersB.Count);
+                winnersB.Add(numbersB[randomNumB]);
+                numbersB.RemoveAt(randomNumB);
+            }
+
+            winnersA.Sort();
+            winnersB.Sort();
+
+            parentA = nets[winnersA[winnersA.Count - 1]];
+            parentB = nets[winnersB[winnersB.Count - 1]];
+
+            NeuralNetwork[] newNet = Crossover(parentA, parentB);
+
+            newNet[0].Mutate();
+            newNet[1].Mutate();
+            newNets.Add(new NeuralNetwork(newNet[0]));
+            newNets.Add(new NeuralNetwork(newNet[1]));
+        }
+        return newNets;
+    }
+    // Selection Type Elitist Selection.
+    // Chooses the two cars with the highest fitness score and generates a new generation from their Genes
+    private List<NeuralNetwork> ElitistSelection()
+    {
+        // generate new List for the new generation
+        List<NeuralNetwork> newNets = new List<NeuralNetwork>();
+        NeuralNetwork parentA = new NeuralNetwork(nets[nets.Count - 1]);
+        NeuralNetwork parentB = new NeuralNetwork(nets[nets.Count - 2]);
+
+        for (int i = 0; i < populationSize / 2; i++)
+        {
+            NeuralNetwork[] newNet = Crossover(parentA, parentB);
+
+            newNet[0].Mutate();
+            newNet[1].Mutate();
+            newNets.Add(new NeuralNetwork(newNet[0]));
+            newNets.Add(new NeuralNetwork(newNet[1]));
+        }
+        return newNets;
+    }
+    // Selection Type Random Selection
+    // Selects two parents completely randomly
+    private List<NeuralNetwork> RandomSelection()
+    {
+        // generate new List for the new generation
+        List<NeuralNetwork> newNets = new List<NeuralNetwork>();
+        for (int i = 0; i < populationSize / 2; i++)
+        {
+            int a = Random.Range(0, nets.Count - 1);
+            int b = Random.Range(0, nets.Count - 1);
+
+            NeuralNetwork parentA = new NeuralNetwork(nets[a]);
+            NeuralNetwork parentB = new NeuralNetwork(nets[b]);
+
+            NeuralNetwork[] newNet = Crossover(parentA, parentB);
+
+            newNet[0].Mutate();
+            newNet[1].Mutate();
+            newNets.Add(new NeuralNetwork(newNet[0]));
+            newNets.Add(new NeuralNetwork(newNet[1]));
+        }
+        return newNets;
+    }
     // Adds the fitness values of all cars together and calculates each cars score as follows:
     // score = fitnessValue / SUM(fitnessValuesOfAllCars)
-    private void RouletteWheelSelection(List<NeuralNetwork> nets)
+    private void SetFitnessPercent(List<NeuralNetwork> nets)
     {
         // sum up fitness
         float sum = 0f;
@@ -278,7 +319,7 @@ public class EvolutionManager : MonoBehaviour {
     }
     // Adds the ranks of all cars together and calculates each cars score as follows:
     // score = rank / SUM(RanksOfAllCars)
-    private void RankSelection(List<NeuralNetwork> nets)
+    private void SetRankPercent(List<NeuralNetwork> nets)
     {
         float sum = 0f;
         for (int i = 0; i < nets.Count; i++)
@@ -305,17 +346,20 @@ public class EvolutionManager : MonoBehaviour {
         index--;
         return nets[index];
     }
-    // Performs Crossover over the two parent cars. Splits the weights matrix at 3 points and interchanges the split arrays to generate a new child
-    private NeuralNetwork Crossover(NeuralNetwork a, NeuralNetwork b)
+    // Performs One-Point Crossover over the two parent cars. Generates two new gene sets for the next generation
+    private NeuralNetwork[] Crossover(NeuralNetwork a, NeuralNetwork b)
     {
         float[][][] aWeights = a.GetWeightsMatrix();
         float[][][] bWeights = b.GetWeightsMatrix();
-        NeuralNetwork newNeuralNetwork = new NeuralNetwork(a);
-        float[][][] newWeights = aWeights;
+        NeuralNetwork[] newNeuralNetwork = new NeuralNetwork[2];
+        newNeuralNetwork[0] = new NeuralNetwork(a);
+        newNeuralNetwork[1] = new NeuralNetwork(b);
+        float[][][] newWeightsA = aWeights;
+        float[][][] newWeightsB = aWeights;
 
-        int splitPointA = Random.Range(0, aWeights.Length);
-        int splitPointB = Random.Range(0, aWeights[splitPointA].Length);
-        int splitPointC = Random.Range(0, aWeights[splitPointA][splitPointB].Length);
+        int splitPoint1A = Random.Range(0, aWeights.Length);
+        int splitPoint1B = Random.Range(0, aWeights[splitPoint1A].Length);
+        int splitPoint1C = Random.Range(0, aWeights[splitPoint1A][splitPoint1B].Length);
 
         for (int i = 0; i < aWeights.Length; i++)
         {
@@ -323,18 +367,21 @@ public class EvolutionManager : MonoBehaviour {
             {
                 for (int k = 0; k < aWeights[i][j].Length; k++)
                 {
-                    if (i >= splitPointA && j >= splitPointB && k >= splitPointC)
+                    if (i >= splitPoint1A && j >= splitPoint1B && k >= splitPoint1C)
                     {
-                        newWeights[i][j][k] = bWeights[i][j][k];
+                        newWeightsA[i][j][k] = bWeights[i][j][k];
+                        newWeightsB[i][j][k] = aWeights[i][j][k];
                     }
                     else
                     {
-                        newWeights[i][j][k] = aWeights[i][j][k];
+                        newWeightsA[i][j][k] = bWeights[i][j][k];
+                        newWeightsB[i][j][k] = aWeights[i][j][k];
                     }
                 }
             }
         }
-        newNeuralNetwork.SetWeightsMatrix(newWeights);
+        newNeuralNetwork[0].SetWeightsMatrix(newWeightsA);
+        newNeuralNetwork[1].SetWeightsMatrix(newWeightsB);
 
         return newNeuralNetwork;
     }
