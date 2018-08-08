@@ -110,6 +110,7 @@ public class PublicManager : MonoBehaviour {
             InputField stopAtGeneration = GameObject.Find("StopAtGenerationInput").GetComponent<InputField>();
             stopGenerationNumber = int.Parse(stopAtGeneration.text);
         }
+        Debug.Log(selectionTypeName);
         evoMan.selectionType = selectionTypeName;
         // Starts the simulation by toggling 3 bools in 3 different scripts
         evoMan.start = true;
@@ -210,6 +211,19 @@ public class PublicManager : MonoBehaviour {
         if (numberWinners < 0)
         {
             tournamentWinners.text = Mathf.Abs(numberWinners).ToString();
+        }
+    }
+
+    public void OnMutationProbChanged(InputField mutationProb)
+    {
+        float mutation = float.Parse(mutationProb.text);
+        if (mutation < 0)
+        {
+            mutationProb.text = "0";
+        }
+        else if (mutation > 1)
+        {
+            mutationProb.text = "1";
         }
     }
 }
