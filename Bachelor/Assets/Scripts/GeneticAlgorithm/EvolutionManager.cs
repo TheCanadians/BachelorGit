@@ -12,7 +12,8 @@ public class EvolutionManager : MonoBehaviour {
     private int populationSize = 20;
     private int[] layers; // Topology
 
-    public bool start = false;
+    public bool training = false;
+    public bool test = false;
     public bool isTraining = false;
     private bool isSpawning = true;
     private int generationNumber = 0;
@@ -25,13 +26,21 @@ public class EvolutionManager : MonoBehaviour {
     private bool logProgress;
     private int stopNumber;
     private bool lastLog = false;
+    private bool readSave = false;
+    public bool safety = false;
 
     public int averageFitness = 0;
     public float bestFitness = 0f;
+    public float[][][] saveWeights;
+    public float[][][] loadWeights;
 
     private List<string> compareList = new List<string>();
     private string textPath = "Assets/compare.txt";
+    public string readPath;
     private StreamWriter writer;
+    private StreamReader reader;
+
+    public TextAsset file;
 
     PublicManager publicManager;
 
@@ -57,11 +66,9 @@ public class EvolutionManager : MonoBehaviour {
          * 2.2.2.2. Mutate new child
          * 2.2.2.3. Back to 2.1.
          */
-
-
-        if (start)
+        if (training)
         {
-            if (isTraining == false)
+            if (!isTraining)
             {
                 GetUserInput();
                 // Initiate Neural Networks once after the start of the simulation
@@ -76,6 +83,27 @@ public class EvolutionManager : MonoBehaviour {
                 isTraining = true;
                 isSpawning = true;
                 // Create new generation of cars
+                CreateCars();
+            }
+            if (isSpawning)
+            {
+                CheckAlive();
+            }
+        }
+        else if (test)
+        {
+            if (!isTraining)
+            {
+                populationSize = 1;
+                if (!readSave)
+                {
+                    readSave = true;
+                    ReadNeuralNetworkFile(readPath);
+                    InitNeuralNetworksTest();
+                }
+                generationNumber++;
+                isTraining = true;
+                isSpawning = true;
                 CreateCars();
             }
             if (isSpawning)
@@ -99,12 +127,6 @@ public class EvolutionManager : MonoBehaviour {
         // initialize only once
         if (generationNumber == 0)
         {
-            // checks if the population size is even, if not sets it to 20 (default)
-            if (populationSize % 2 != 0)
-            {
-                populationSize = 20;
-            }
-
             nets = new List<NeuralNetwork>();
             // generates new random neural network and sets mutation settings, than mutates
             for (int i = 0; i < populationSize; i++)
@@ -116,6 +138,20 @@ public class EvolutionManager : MonoBehaviour {
                 nets.Add(net);
             }
         }
+    }
+    private void InitNeuralNetworksTest()
+    {
+        nets = new List<NeuralNetwork>();
+        List<int> numberOfNeuronsPerLayer = new List<int>();
+        numberOfNeuronsPerLayer.Add(5);
+        for (int i = 0; i < loadWeights.Length; i++)
+        {
+            numberOfNeuronsPerLayer.Add(loadWeights[i].Length);
+        }
+        int[] loadedTopology = numberOfNeuronsPerLayer.ToArray();
+        NeuralNetwork testNet = new NeuralNetwork(loadedTopology);
+        testNet.SetWeightsMatrix(loadWeights);
+        nets.Add(testNet);
     }
     // Evaluate the generation based on fitness scores
     private void Eval()
@@ -401,17 +437,18 @@ public class EvolutionManager : MonoBehaviour {
                 isSpawning = false;
                 
                 averageFitness = (int)GetAverageFitness();
-                bestFitness = GetBestCar();
+                float bestGenFitness;
+                bestGenFitness = GetBestCar();
                 // logs the average fitness for every generation in a text file
                 if (logProgress)
                 {
-                    string log = generationNumber + "   Best Fitness: " + bestFitness +  "   Average Fitness: " + averageFitness + "   Selection Type: " + selectionType;
+                    string log = generationNumber + "   Best Fitness: " + bestGenFitness +  "   Average Fitness: " + averageFitness + "   Selection Type: " + selectionType;
                     compareList.Add(log);
 
                     GameObject checkpointsParent = GameObject.Find("Checkpoints");
                     Checkpoint lastCheckpoint = checkpointsParent.transform.GetChild(checkpointsParent.transform.childCount - 1).GetComponent<Checkpoint>();
 
-                    if (generationNumber <= stopNumber && bestFitness <= lastCheckpoint.fitnessValue && !lastLog)
+                    if (generationNumber <= stopNumber && bestGenFitness <= lastCheckpoint.fitnessValue && !lastLog)
                     {
                         writer.WriteLine(log);
                     }
@@ -456,7 +493,99 @@ public class EvolutionManager : MonoBehaviour {
         System.Array.Sort(carsNetworks, CompareFitness);
         bestCar = carsNetworks[carsNetworks.Length - 1].GetFitness();
 
+        if (bestCar > bestFitness)
+        {
+            bestFitness = bestCar;
+            if (bestFitness >= 33 && !test && safety)
+            {
+                saveWeights = carsNetworks[carsNetworks.Length - 1].GetWeightsMatrix();
+                SaveBestNeuralNetwork(saveWeights);
+                safety = false;
+            }
+        }
         return bestCar;
+    }
+
+    public void SaveBestNeuralNetwork(float[][][] array)
+    {
+        string savePath = Random.Range(0, 100000).ToString();
+        savePath = "Assets/" + generationNumber + "-" + savePath + ".txt";
+        StreamWriter writer2 = new StreamWriter(savePath, true);
+
+        for (int i = 0; i < array.Length; i++)
+        {
+            writer2.WriteLine("Layer");
+            for (int j = 0; j < array[i].Length; j++)
+            {
+                string neuronWeights = "";
+                for (int k = 0; k < array[i][j].Length; k++)
+                {
+                    if (k < array[i][j].Length - 1)
+                    {
+                        neuronWeights += array[i][j][k].ToString() + " ";
+                    }
+                    else
+                    {
+                        neuronWeights += array[i][j][k].ToString();
+                    }
+                    
+                }
+                writer2.WriteLine(neuronWeights);
+            }
+        }
+
+        writer2.Close();
+        AssetDatabase.ImportAsset(savePath);
+        TextAsset asset = (TextAsset)Resources.Load(savePath);
+    }
+
+    public void ReadNeuralNetworkFile(string neuralNetworkFilePath)
+    {
+        bool sameLayer = true;
+        reader = new StreamReader(neuralNetworkFilePath);
+
+        float[][][] loadedWeights;
+        List<float[][]> loadedWeightsList = new List<float[][]>();
+
+        while (reader.Peek() >= 0)
+        {
+            string layerLine = reader.ReadLine();
+
+            if (layerLine == "Layer")
+            {
+                List<float[]> loadedWeightsLayer = new List<float[]>();
+                List<string> layerStringList = new List<string>();
+
+                while (sameLayer)
+                {
+                    int nextLine = reader.Peek();
+                    if (nextLine != 76 && reader.Peek() >= 0)
+                    {
+                        string readNextLine = reader.ReadLine();
+                        layerStringList.Add(readNextLine);
+                    }
+                    else
+                    {
+                        sameLayer = false;
+                    }
+                }
+                foreach(string line in layerStringList)
+                {
+                    List<float> loadedWeightsNeuron = new List<float>();
+                    string[] splitLine = line.Split(' ');
+                    foreach(string weight in splitLine)
+                    {
+                        loadedWeightsNeuron.Add((float)double.Parse(weight));
+                    }
+                    loadedWeightsLayer.Add(loadedWeightsNeuron.ToArray());
+                }
+                loadedWeightsList.Add(loadedWeightsLayer.ToArray());
+                sameLayer = true;
+            }
+        }
+        loadedWeights = loadedWeightsList.ToArray();
+        loadWeights = loadedWeights;
+        reader.Close();
     }
     // Create new Car Objects
     private void CreateCars()
@@ -470,7 +599,6 @@ public class EvolutionManager : MonoBehaviour {
         }
 
         carList = new List<CarMovement>();
-
         for (int i = 0; i < populationSize; i++)
         {
             CarMovement car = ((GameObject)Instantiate(carPrefab, carPrefab.transform.position, carPrefab.transform.rotation)).GetComponent<CarMovement>();

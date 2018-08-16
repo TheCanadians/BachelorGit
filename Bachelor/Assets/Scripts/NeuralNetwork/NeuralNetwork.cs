@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 
+[System.Serializable]
 public class NeuralNetwork : IComparable<NeuralNetwork> {
 
     private int[] layers; // number of layers

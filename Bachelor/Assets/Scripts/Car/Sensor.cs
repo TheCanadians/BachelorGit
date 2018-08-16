@@ -40,7 +40,8 @@ public class Sensor : MonoBehaviour {
 
         distance = wallHit.distance;
         // Add noise between min and max Noise to distance to simulate reality better
-        float noise = Random.Range(pM.minNoise, pM.maxNoise);
+        //float noise = Random.Range(pM.minNoise, pM.maxNoise);
+        float noise = RandomFromDistribution.RandomNormalDistribution(0, pM.stdDev);
         distance += noise;
         // Set EndPoint position to raycast hit position
         EndPoint.transform.position = (Vector2)this.transform.position + sensorDirection * wallHit.distance;

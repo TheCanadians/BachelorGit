@@ -11,6 +11,11 @@ public class PublicManager : MonoBehaviour {
     public UISimulationController uiSimCon;
     // inactive Gameobjects and layer Prefab
     public GameObject simulationPanel;
+    public GameObject neuralNetworkPanel;
+    public GameObject evolutionPanel;
+    public GameObject loadNeuralNetPanel;
+    public GameObject saveBestCarToggle;
+    public InputField path;
     public InputField layer;
     public GameObject tournamentPanel;
     public GameObject stopAtGenerationPanel;
@@ -26,10 +31,8 @@ public class PublicManager : MonoBehaviour {
     public float timeToDeath = 0f;
     // Adds noise to the sensors
     [Header("Sensor Settings")]
-    [Range(0.0f, 5.0f)]
-    public float maxNoise = 0f;
-    [Range(-5.0f, 0.0f)]
-    public float minNoise = 0f;
+    [Range(0.0f, 1.0f)]
+    public float stdDev = 0f;
     // Settings for the neural network, like activation function and number of layers and neurons per layer
     [Header("Neural Network Settings")]
     public ActivationFunction activationFnc;
@@ -67,67 +70,71 @@ public class PublicManager : MonoBehaviour {
     {
         Elitist,RouletteWheel,Tournament,Rank,Random
     }
+    public TextAsset file;
     
     // Method that starts the simulation when the GUI Button "Start Simulation" is pressed. Gets all relevant GUI values and sets them.
     public void StartSimulation()
     {
-        Slider minNoiseSlider = GameObject.Find("MinNoiseSlider").GetComponent<Slider>();
-        minNoise = minNoiseSlider.value;
-        Slider maxNoiseSlider = GameObject.Find("MaxNoiseSlider").GetComponent<Slider>();
-        maxNoise = maxNoiseSlider.value;
-        InputField numberOfLayers = GameObject.Find("NumberOfLayersInput").GetComponent<InputField>();
-        GameObject layersPanel = GameObject.Find("LayersPanel");
-        layers = new int[int.Parse(numberOfLayers.text) + 2];
-        int index = -1;
-        foreach(Transform child in layersPanel.transform)
+        if (GameObject.Find("TestToggle").GetComponent<Toggle>().isOn)
         {
-            if (child.GetSiblingIndex() != 0)
+            string loadPath = this.path.text;
+            evoMan.readPath = loadPath;
+            evoMan.test = true;
+        }
+        else
+        {
+            InputField numberOfLayers = GameObject.Find("NumberOfLayersInput").GetComponent<InputField>();
+            GameObject layersPanel = GameObject.Find("LayersPanel");
+            layers = new int[int.Parse(numberOfLayers.text) + 2];
+            int index = -1;
+            foreach (Transform child in layersPanel.transform)
             {
-                InputField childInput = child.GetComponent<InputField>();
-                int numberOfNeurons = int.Parse(childInput.text);
-                layers[index] = numberOfNeurons;
+                if (child.GetSiblingIndex() != 0)
+                {
+                    InputField childInput = child.GetComponent<InputField>();
+                    int numberOfNeurons = int.Parse(childInput.text);
+                    layers[index] = numberOfNeurons;
+                }
+                index++;
             }
-            index++;
+            InputField populationSize = GameObject.Find("PopulationInput").GetComponent<InputField>();
+            population = int.Parse(populationSize.text);
+            Dropdown selectionTypeDropdown = GameObject.Find("SelectionTypeDropdown").GetComponent<Dropdown>();
+            int dropdownValue = selectionTypeDropdown.value;
+            selectionTypeName = selectionTypeDropdown.options[dropdownValue].text;
+            InputField mutationProb = GameObject.Find("MutationProbabilityInput").GetComponent<InputField>();
+            mutationProbability = float.Parse(mutationProb.text);
+            InputField mutationAmountInput = GameObject.Find("MutationAmountInput").GetComponent<InputField>();
+            mutationAmount = float.Parse(mutationAmountInput.text);
+            if (selectionTypeDropdown.value == 2)
+            {
+                InputField tournamentWinners = GameObject.Find("TournamentWinnersInput").GetComponent<InputField>();
+                numberOfTournamentWinners = int.Parse(tournamentWinners.text);
+            }
+            evoMan.selectionType = selectionTypeName;
+            evoMan.safety = GameObject.Find("TrainingToggle").GetComponent<Toggle>().isOn;
+            evoMan.training = true;
         }
-        InputField populationSize = GameObject.Find("PopulationInput").GetComponent<InputField>();
-        population = int.Parse(populationSize.text);
-        Dropdown selectionTypeDropdown = GameObject.Find("SelectionTypeDropdown").GetComponent<Dropdown>();
-        int dropdownValue = selectionTypeDropdown.value;
-        selectionTypeName = selectionTypeDropdown.options[dropdownValue].text;
-        InputField mutationProb = GameObject.Find("MutationProbabilityInput").GetComponent<InputField>();
-        mutationProbability = float.Parse(mutationProb.text);
-        InputField mutationAmountInput = GameObject.Find("MutationAmountInput").GetComponent<InputField>();
-        mutationAmount = float.Parse(mutationAmountInput.text);
+
+        Slider stdDevSlider = GameObject.Find("StdDevSlider").GetComponent<Slider>();
+        stdDev = stdDevSlider.value;       
         Toggle compareToggle = GameObject.Find("LogProgressToggle").GetComponent<Toggle>();
-        logProgress = compareToggle.isOn;
-        if (selectionTypeDropdown.value == 2)
-        {
-            InputField tournamentWinners = GameObject.Find("TournamentWinnersInput").GetComponent<InputField>();
-            numberOfTournamentWinners = int.Parse(tournamentWinners.text);
-        }
+        logProgress = compareToggle.isOn;      
         if (compareToggle.isOn)
         {
             InputField stopAtGeneration = GameObject.Find("StopAtGenerationInput").GetComponent<InputField>();
             stopGenerationNumber = int.Parse(stopAtGeneration.text);
-        }
-        Debug.Log(selectionTypeName);
-        evoMan.selectionType = selectionTypeName;
+        }   
         // Starts the simulation by toggling 3 bools in 3 different scripts
-        evoMan.start = true;
         uiCon.start = true;
         uiSimCon.start = true;
         // Deactivates GUI after start
         simulationPanel.SetActive(false);
     }
-    // Refreshes min Slider text value
-    public void ChangeMinSliderText(Slider minSlider)
+    // Refreshes Standard Deviation Slider text value
+    public void ChangeMinSliderText(Slider stdDevSlider)
     {
-        GameObject.Find("MinSliderText").GetComponent<Text>().text = minSlider.value.ToString();
-    }
-    // Refreshes max Slider text value
-    public void ChangeMaxSliderText(Slider maxSlider)
-    {
-        GameObject.Find("MaxSliderText").GetComponent<Text>().text = maxSlider.value.ToString();
+        GameObject.Find("StdDevText").GetComponent<Text>().text = stdDevSlider.value.ToString();
     }
     // Changes the number of input fields below. Can't go higher than 8 and has to be at least 2 (for input and output layer)
     public void ChangeNeuralLayerCount(InputField layers)
@@ -213,7 +220,7 @@ public class PublicManager : MonoBehaviour {
             tournamentWinners.text = Mathf.Abs(numberWinners).ToString();
         }
     }
-
+    // Caps the mutation probability between 0 and 1, for obvious reasons
     public void OnMutationProbChanged(InputField mutationProb)
     {
         float mutation = float.Parse(mutationProb.text);
@@ -224,6 +231,34 @@ public class PublicManager : MonoBehaviour {
         else if (mutation > 1)
         {
             mutationProb.text = "1";
+        }
+    }
+
+    public void TestToggle(Toggle testToggle)
+    {
+        if(testToggle.isOn)
+        {
+            loadNeuralNetPanel.SetActive(true);
+            neuralNetworkPanel.SetActive(false);
+            evolutionPanel.SetActive(false);
+        }
+        else
+        {
+            loadNeuralNetPanel.SetActive(false);
+            neuralNetworkPanel.SetActive(true);
+            evolutionPanel.SetActive(true);
+        }
+    }
+
+    public void TrainingToggle(Toggle trainingToggle)
+    {
+        if (trainingToggle.isOn)
+        {
+            saveBestCarToggle.SetActive(true);
+        }
+        else
+        {
+            saveBestCarToggle.SetActive(false);
         }
     }
 }
