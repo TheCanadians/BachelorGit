@@ -35,7 +35,7 @@ public class EvolutionManager : MonoBehaviour {
     public float[][][] loadWeights;
 
     private List<string> compareList = new List<string>();
-    private string textPath = "Assets/";
+    public string textPath = "C:/Users/vschn/Desktop/";
     public string readPath;
     private StreamWriter writer;
     private StreamReader reader;
@@ -135,9 +135,12 @@ public class EvolutionManager : MonoBehaviour {
                 net.Mutate();
                 nets.Add(net);
             }
-            int randomName = Random.Range(0, 1000);
-            textPath += "training" + selectionType + "-" + stopNumber + "-" + randomName + ".txt";
-            writer = new StreamWriter(textPath, true);
+            if (logProgress)
+            {
+                int randomName = Random.Range(0, 1000);
+                textPath += "training" + selectionType + "-" + stopNumber + "-" + randomName + ".txt";
+                writer = new StreamWriter(textPath, true);
+            }
         }
     }
     private void InitNeuralNetworksTest()
@@ -155,9 +158,12 @@ public class EvolutionManager : MonoBehaviour {
             NeuralNetwork testNet = new NeuralNetwork(loadedTopology);
             testNet.SetWeightsMatrix(loadWeights);
             nets.Add(testNet);
-            int randomName = Random.Range(0, 1000);
-            textPath += "test" + stopNumber + "-" + randomName + ".txt";
-            writer = new StreamWriter(textPath, true);
+            if (logProgress)
+            {
+                int randomName = Random.Range(0, 1000);
+                textPath += "test" + stopNumber + "-" + randomName + ".txt";
+                writer = new StreamWriter(textPath, true);
+            }
         }
 
     }
@@ -537,7 +543,7 @@ public class EvolutionManager : MonoBehaviour {
     public void SaveBestNeuralNetwork(float[][][] array)
     {
         string savePath = Random.Range(0, 100000).ToString();
-        savePath = "Assets/" + generationNumber + "-" + savePath + ".txt";
+        savePath = "C:/Users/vschn/Desktop/" + generationNumber + "-" + savePath + ".txt";
         StreamWriter writer2 = new StreamWriter(savePath, true);
 
         for (int i = 0; i < array.Length; i++)

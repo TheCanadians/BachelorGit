@@ -19,6 +19,7 @@ public class PublicManager : MonoBehaviour {
     public InputField layer;
     public GameObject tournamentPanel;
     public GameObject stopAtGenerationPanel;
+    public GameObject saveNeuralNetPanel;
     // Settings for the cars, how fast they turn, accelerate, their max Speed and how much time without checkpoint needs to pass before they die
     [Header("Car Settings")]
     [SerializeField]
@@ -126,6 +127,9 @@ public class PublicManager : MonoBehaviour {
             InputField stopAtGeneration = GameObject.Find("StopAtGenerationInput").GetComponent<InputField>();
             stopGenerationNumber = int.Parse(stopAtGeneration.text);
             evoMan.stopNumber = stopGenerationNumber;
+            InputField saveNeuralNet = GameObject.Find("SaveNeuralNetInput").GetComponent<InputField>();
+            string savePath = saveNeuralNet.text;
+            evoMan.textPath = savePath;
         }   
         // Starts the simulation by toggling 3 bools in 3 different scripts
         uiCon.start = true;
@@ -198,10 +202,12 @@ public class PublicManager : MonoBehaviour {
         if(toggle.isOn)
         {
             stopAtGenerationPanel.SetActive(true);
+            saveNeuralNetPanel.SetActive(true);
         }
         else
         {
             stopAtGenerationPanel.SetActive(false);
+            saveNeuralNetPanel.SetActive(false);
         }
     }
     // Caps the population at 80 for performance reasons
