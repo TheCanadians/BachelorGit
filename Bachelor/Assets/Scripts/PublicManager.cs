@@ -119,11 +119,13 @@ public class PublicManager : MonoBehaviour {
         Slider stdDevSlider = GameObject.Find("StdDevSlider").GetComponent<Slider>();
         stdDev = stdDevSlider.value;       
         Toggle compareToggle = GameObject.Find("LogProgressToggle").GetComponent<Toggle>();
-        logProgress = compareToggle.isOn;      
+        logProgress = compareToggle.isOn;
+        evoMan.logProgress = this.logProgress;  
         if (compareToggle.isOn)
         {
             InputField stopAtGeneration = GameObject.Find("StopAtGenerationInput").GetComponent<InputField>();
             stopGenerationNumber = int.Parse(stopAtGeneration.text);
+            evoMan.stopNumber = stopGenerationNumber;
         }   
         // Starts the simulation by toggling 3 bools in 3 different scripts
         uiCon.start = true;
@@ -132,9 +134,13 @@ public class PublicManager : MonoBehaviour {
         simulationPanel.SetActive(false);
     }
     // Refreshes Standard Deviation Slider text value
-    public void ChangeMinSliderText(Slider stdDevSlider)
+    public void ChangeStdDevSliderText(Slider stdDevSlider)
     {
-        GameObject.Find("StdDevText").GetComponent<Text>().text = stdDevSlider.value.ToString();
+        GameObject.Find("StdDevInputField").GetComponent<InputField>().text = stdDevSlider.value.ToString();
+    }
+    public void OnStdDevInputChanged(InputField stdDevInput)
+    {
+        GameObject.Find("StdDevSlider").GetComponent<Slider>().value = float.Parse(stdDevInput.text);
     }
     // Changes the number of input fields below. Can't go higher than 8 and has to be at least 2 (for input and output layer)
     public void ChangeNeuralLayerCount(InputField layers)

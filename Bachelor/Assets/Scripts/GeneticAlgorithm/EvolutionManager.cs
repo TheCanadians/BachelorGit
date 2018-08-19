@@ -23,8 +23,8 @@ public class EvolutionManager : MonoBehaviour {
     private static System.Random randomizer = new System.Random();
     public string selectionType = "RouletteWheel";
     private int tournamentWinners;
-    private bool logProgress;
-    private int stopNumber;
+    public bool logProgress;
+    public int stopNumber;
     private bool lastLog = false;
     private bool readSave = false;
     public bool safety = false;
@@ -35,7 +35,7 @@ public class EvolutionManager : MonoBehaviour {
     public float[][][] loadWeights;
 
     private List<string> compareList = new List<string>();
-    private string textPath = "Assets/compare.txt";
+    private string textPath = "Assets/";
     public string readPath;
     private StreamWriter writer;
     private StreamReader reader;
@@ -48,7 +48,7 @@ public class EvolutionManager : MonoBehaviour {
     {
         // get user inputs
         publicManager = GameObject.Find("PublicManager").GetComponent<PublicManager>();
-        writer = new StreamWriter(textPath, true);
+        
     }
     void StartTraining()
     {
@@ -118,8 +118,6 @@ public class EvolutionManager : MonoBehaviour {
         this.layers = publicManager.layers;
         this.selectionType = publicManager.selectionTypeName;
         this.tournamentWinners = publicManager.numberOfTournamentWinners;
-        this.logProgress = publicManager.logProgress;
-        this.stopNumber = publicManager.stopGenerationNumber;
     }
     // Initiate neural networks for the population once
     private void InitNeuralNetworks()
@@ -137,21 +135,31 @@ public class EvolutionManager : MonoBehaviour {
                 net.Mutate();
                 nets.Add(net);
             }
+            int randomName = Random.Range(0, 1000);
+            textPath += "training" + selectionType + "-" + stopNumber + "-" + randomName + ".txt";
+            writer = new StreamWriter(textPath, true);
         }
     }
     private void InitNeuralNetworksTest()
     {
-        nets = new List<NeuralNetwork>();
-        List<int> numberOfNeuronsPerLayer = new List<int>();
-        numberOfNeuronsPerLayer.Add(5);
-        for (int i = 0; i < loadWeights.Length; i++)
+        if (generationNumber == 0)
         {
-            numberOfNeuronsPerLayer.Add(loadWeights[i].Length);
+            nets = new List<NeuralNetwork>();
+            List<int> numberOfNeuronsPerLayer = new List<int>();
+            numberOfNeuronsPerLayer.Add(5);
+            for (int i = 0; i < loadWeights.Length; i++)
+            {
+                numberOfNeuronsPerLayer.Add(loadWeights[i].Length);
+            }
+            int[] loadedTopology = numberOfNeuronsPerLayer.ToArray();
+            NeuralNetwork testNet = new NeuralNetwork(loadedTopology);
+            testNet.SetWeightsMatrix(loadWeights);
+            nets.Add(testNet);
+            int randomName = Random.Range(0, 1000);
+            textPath += "test" + stopNumber + "-" + randomName + ".txt";
+            writer = new StreamWriter(textPath, true);
         }
-        int[] loadedTopology = numberOfNeuronsPerLayer.ToArray();
-        NeuralNetwork testNet = new NeuralNetwork(loadedTopology);
-        testNet.SetWeightsMatrix(loadWeights);
-        nets.Add(testNet);
+
     }
     // Evaluate the generation based on fitness scores
     private void Eval()
@@ -442,29 +450,49 @@ public class EvolutionManager : MonoBehaviour {
                 // logs the average fitness for every generation in a text file
                 if (logProgress)
                 {
-                    string log = generationNumber + "   Best Fitness: " + bestGenFitness +  "   Average Fitness: " + averageFitness + "   Selection Type: " + selectionType;
+                    string log = generationNumber + "   Best Fitness: " + bestGenFitness;
                     compareList.Add(log);
 
                     GameObject checkpointsParent = GameObject.Find("Checkpoints");
                     Checkpoint lastCheckpoint = checkpointsParent.transform.GetChild(checkpointsParent.transform.childCount - 1).GetComponent<Checkpoint>();
 
-                    if (generationNumber <= stopNumber && bestGenFitness <= lastCheckpoint.fitnessValue && !lastLog)
+                    if (training)
                     {
-                        writer.WriteLine(log);
-                    }
-                    else
-                    {
-                        if (!lastLog)
+                        if (generationNumber < stopNumber && bestGenFitness <= lastCheckpoint.fitnessValue && !lastLog)
                         {
                             writer.WriteLine(log);
-                            lastLog = true;
                         }
-                        writer.Close();
+                        else
+                        {
+                            if (!lastLog)
+                            {
+                                writer.WriteLine(log);
+                                lastLog = true;
+                            }
+                            writer.Close();
+                            //AssetDatabase.ImportAsset(textPath);
+                            TextAsset asset = (TextAsset)Resources.Load(textPath);
+                        }
+                    }
+                    else if (test)
+                    {
+                        if (generationNumber < stopNumber && !lastLog)
+                        {
+                            writer.WriteLine(log);
+                        }
+                        else
+                        {
+                            if (!lastLog)
+                            {
+                                writer.WriteLine(log);
+                                lastLog = true;
+                            }
+                            writer.Close();
+                            //AssetDatabase.ImportAsset(textPath);
+                            TextAsset asset = (TextAsset)Resources.Load(textPath);
+                        }
                     }
                 }
-
-               
-
                 Invoke("StartTraining", 1f);
             }
         }
@@ -535,7 +563,7 @@ public class EvolutionManager : MonoBehaviour {
         }
 
         writer2.Close();
-        AssetDatabase.ImportAsset(savePath);
+        //AssetDatabase.ImportAsset(savePath);
         TextAsset asset = (TextAsset)Resources.Load(savePath);
     }
 
