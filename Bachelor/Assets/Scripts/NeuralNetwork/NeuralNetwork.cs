@@ -7,7 +7,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
 
     private int[] layers; // number of layers
     private float[][] neurons; // number of neurons per layer
-    private float[][][] weights; // number of weights per neuron
+    private float[][][] weights; // number of weights per neuron per layer ([0][0][0]: starts with weights from second to first layer)
     private float fitness; // fitness value of the network
     public float score = 0f;
 
@@ -60,7 +60,6 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
             }
         }
     }
-
     // Create Neurons
     private void InitNeurons()
     {
@@ -79,7 +78,6 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
 
         neurons = neuronsList.ToArray(); // convert List to Array
     }
-
     // Create Weights
     private void InitWeights()
     {
@@ -135,7 +133,6 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
         // convert to array
         weights = weightsList.ToArray();
     }
-
     // Feed Forward method to get outputs
     public float[] FeedForward(float[] inputs)
     {
@@ -177,7 +174,6 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
         // return output values
         return neurons[neurons.Length - 1];
     }
-
     // Mutate Neural Network Weights
     public void Mutate()
     {
@@ -235,7 +231,6 @@ public class NeuralNetwork : IComparable<NeuralNetwork> {
     {
         return fitness;
     }
-
     // Compare two neural and sort based on fitness
     public int CompareTo(NeuralNetwork other)
     {

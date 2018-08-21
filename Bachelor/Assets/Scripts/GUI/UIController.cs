@@ -16,6 +16,7 @@ public class UIController : MonoBehaviour {
 
     private void Update()
     {
+        // Wait for StartButton Press
         if (start)
         {
             simulationUI.Show();

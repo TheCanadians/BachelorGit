@@ -37,6 +37,7 @@ public class EvolutionManager : MonoBehaviour {
     private List<string> compareList = new List<string>();
     public string textPath = "C:/Users/vschn/Desktop/";
     public string readPath;
+    public string savePath;
     private StreamWriter writer;
     private StreamReader reader;
 
@@ -66,6 +67,7 @@ public class EvolutionManager : MonoBehaviour {
          * 2.2.2.2. Mutate new child
          * 2.2.2.3. Back to 2.1.
          */
+         // if Training was chosen
         if (training)
         {
             if (!isTraining)
@@ -90,11 +92,14 @@ public class EvolutionManager : MonoBehaviour {
                 CheckAlive();
             }
         }
+        // if Test was chosen
         else if (test)
         {
             if (!isTraining)
             {
+                // Set population size to 1
                 populationSize = 1;
+                // Read Text File with saved neural network weights once
                 if (!readSave)
                 {
                     readSave = true;
@@ -119,7 +124,7 @@ public class EvolutionManager : MonoBehaviour {
         this.selectionType = publicManager.selectionTypeName;
         this.tournamentWinners = publicManager.numberOfTournamentWinners;
     }
-    // Initiate neural networks for the population once
+    // Initiate neural networks for the training population once
     private void InitNeuralNetworks()
     {
         // initialize only once
@@ -143,6 +148,7 @@ public class EvolutionManager : MonoBehaviour {
             }
         }
     }
+    // Initiate the test neural network and swap weights array with saved array
     private void InitNeuralNetworksTest()
     {
         if (generationNumber == 0)
@@ -476,7 +482,6 @@ public class EvolutionManager : MonoBehaviour {
                                 lastLog = true;
                             }
                             writer.Close();
-                            //AssetDatabase.ImportAsset(textPath);
                             TextAsset asset = (TextAsset)Resources.Load(textPath);
                         }
                     }
@@ -494,7 +499,6 @@ public class EvolutionManager : MonoBehaviour {
                                 lastLog = true;
                             }
                             writer.Close();
-                            //AssetDatabase.ImportAsset(textPath);
                             TextAsset asset = (TextAsset)Resources.Load(textPath);
                         }
                     }
@@ -526,10 +530,11 @@ public class EvolutionManager : MonoBehaviour {
         }
         System.Array.Sort(carsNetworks, CompareFitness);
         bestCar = carsNetworks[carsNetworks.Length - 1].GetFitness();
-
+        // check if bet fitness of this generation is higher than overall best fitness
         if (bestCar > bestFitness)
         {
             bestFitness = bestCar;
+            // if car has completed track save weights array in text file
             if (bestFitness >= 33 && !test && safety)
             {
                 saveWeights = carsNetworks[carsNetworks.Length - 1].GetWeightsMatrix();
@@ -539,21 +544,25 @@ public class EvolutionManager : MonoBehaviour {
         }
         return bestCar;
     }
-
+    // Saves the float array in a text file, different layers are divided by a line "Layer", every line in between "Layer" lines are the weights belonging to one neuron
     public void SaveBestNeuralNetwork(float[][][] array)
     {
-        string savePath = Random.Range(0, 100000).ToString();
-        savePath = "C:/Users/vschn/Desktop/" + generationNumber + "-" + savePath + ".txt";
+        // writes the save path with set path + actual generation number + random number
+        string tempPath = Random.Range(0, 100000).ToString();
+        savePath = savePath + generationNumber + "-" + tempPath + ".txt";
+        // opens StreamWriter
         StreamWriter writer2 = new StreamWriter(savePath, true);
-
+        // Loops through the whole weights array
         for (int i = 0; i < array.Length; i++)
         {
+            // Every new Layer gets a "Layer" divider line
             writer2.WriteLine("Layer");
             for (int j = 0; j < array[i].Length; j++)
             {
                 string neuronWeights = "";
                 for (int k = 0; k < array[i][j].Length; k++)
                 {
+                    // if the entry is the last per line
                     if (k < array[i][j].Length - 1)
                     {
                         neuronWeights += array[i][j][k].ToString() + " ";
@@ -564,15 +573,15 @@ public class EvolutionManager : MonoBehaviour {
                     }
                     
                 }
+                // write line
                 writer2.WriteLine(neuronWeights);
             }
         }
-
+        // Close Writer and Save File
         writer2.Close();
-        //AssetDatabase.ImportAsset(savePath);
         TextAsset asset = (TextAsset)Resources.Load(savePath);
     }
-
+    // Reads a text file and saves the values as a float[][][] array and sets the generated neural nets weight array
     public void ReadNeuralNetworkFile(string neuralNetworkFilePath)
     {
         bool sameLayer = true;
@@ -580,21 +589,25 @@ public class EvolutionManager : MonoBehaviour {
 
         float[][][] loadedWeights;
         List<float[][]> loadedWeightsList = new List<float[][]>();
-
+        // Checks if there is a next line in the text file
         while (reader.Peek() >= 0)
         {
+            // read next line
             string layerLine = reader.ReadLine();
-
+            // if line is a "Layer" divider line
             if (layerLine == "Layer")
             {
+                // generate new list
                 List<float[]> loadedWeightsLayer = new List<float[]>();
                 List<string> layerStringList = new List<string>();
-
+                // while next line is not "Layer"
                 while (sameLayer)
                 {
                     int nextLine = reader.Peek();
+                    // ASCII 76 is "L"; checks for "Layer"
                     if (nextLine != 76 && reader.Peek() >= 0)
                     {
+                        // Adds line to String List
                         string readNextLine = reader.ReadLine();
                         layerStringList.Add(readNextLine);
                     }
@@ -603,10 +616,14 @@ public class EvolutionManager : MonoBehaviour {
                         sameLayer = false;
                     }
                 }
+                // Loops through every line (=neuron) in the string list
                 foreach(string line in layerStringList)
                 {
+                    // generate new list for the weights
                     List<float> loadedWeightsNeuron = new List<float>();
+                    // split list entry into an array of strings (every string contains one weight entry)
                     string[] splitLine = line.Split(' ');
+                    // Loops through every word (=weight) in the splitted string array
                     foreach(string weight in splitLine)
                     {
                         loadedWeightsNeuron.Add((float)double.Parse(weight));
@@ -617,6 +634,7 @@ public class EvolutionManager : MonoBehaviour {
                 sameLayer = true;
             }
         }
+        // Convert List to Array and save as float[][][] array
         loadedWeights = loadedWeightsList.ToArray();
         loadWeights = loadedWeights;
         reader.Close();

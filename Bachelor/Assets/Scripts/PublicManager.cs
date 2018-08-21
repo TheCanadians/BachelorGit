@@ -14,12 +14,13 @@ public class PublicManager : MonoBehaviour {
     public GameObject neuralNetworkPanel;
     public GameObject evolutionPanel;
     public GameObject loadNeuralNetPanel;
+    public GameObject saveNeuralNetPanel;
     public GameObject saveBestCarToggle;
     public InputField path;
     public InputField layer;
     public GameObject tournamentPanel;
     public GameObject stopAtGenerationPanel;
-    public GameObject saveNeuralNetPanel;
+    public GameObject saveLogPanel;
     // Settings for the cars, how fast they turn, accelerate, their max Speed and how much time without checkpoint needs to pass before they die
     [Header("Car Settings")]
     [SerializeField]
@@ -76,14 +77,20 @@ public class PublicManager : MonoBehaviour {
     // Method that starts the simulation when the GUI Button "Start Simulation" is pressed. Gets all relevant GUI values and sets them.
     public void StartSimulation()
     {
+        // if Test is choosen, set loadPath and toggle test bool in EvolutionManager.cs
         if (GameObject.Find("TestToggle").GetComponent<Toggle>().isOn)
         {
             string loadPath = this.path.text;
             evoMan.readPath = loadPath;
             evoMan.test = true;
         }
+        // if Training is choosen, set topology, population size, selectionType, mutation probability and amount and toggles training bool in EvolutionManager.cs
         else
         {
+            // Save Path
+            InputField savePathInput = GameObject.Find("SaveNeuralNetInput").GetComponent<InputField>();
+            evoMan.savePath = savePathInput.text;
+            // Topology
             InputField numberOfLayers = GameObject.Find("NumberOfLayersInput").GetComponent<InputField>();
             GameObject layersPanel = GameObject.Find("LayersPanel");
             layers = new int[int.Parse(numberOfLayers.text) + 2];
@@ -98,40 +105,49 @@ public class PublicManager : MonoBehaviour {
                 }
                 index++;
             }
+            // Population Size
             InputField populationSize = GameObject.Find("PopulationInput").GetComponent<InputField>();
             population = int.Parse(populationSize.text);
+            // Selection type
             Dropdown selectionTypeDropdown = GameObject.Find("SelectionTypeDropdown").GetComponent<Dropdown>();
             int dropdownValue = selectionTypeDropdown.value;
             selectionTypeName = selectionTypeDropdown.options[dropdownValue].text;
+            evoMan.selectionType = selectionTypeName;
+            // Mutation Probability
             InputField mutationProb = GameObject.Find("MutationProbabilityInput").GetComponent<InputField>();
             mutationProbability = float.Parse(mutationProb.text);
+            // Mutation Amount
             InputField mutationAmountInput = GameObject.Find("MutationAmountInput").GetComponent<InputField>();
             mutationAmount = float.Parse(mutationAmountInput.text);
+            // Set number of tournament Winners
             if (selectionTypeDropdown.value == 2)
             {
                 InputField tournamentWinners = GameObject.Find("TournamentWinnersInput").GetComponent<InputField>();
                 numberOfTournamentWinners = int.Parse(tournamentWinners.text);
             }
-            evoMan.selectionType = selectionTypeName;
+            // Set bools in EvolutionManager.cs
             evoMan.safety = GameObject.Find("TrainingToggle").GetComponent<Toggle>().isOn;
             evoMan.training = true;
         }
-
+        // Set variables irrelevant of Test or Training chosen
+        // Standard Deviation
         Slider stdDevSlider = GameObject.Find("StdDevSlider").GetComponent<Slider>();
-        stdDev = stdDevSlider.value;       
+        stdDev = stdDevSlider.value;
+        // Log Progress Toggle   
         Toggle compareToggle = GameObject.Find("LogProgressToggle").GetComponent<Toggle>();
         logProgress = compareToggle.isOn;
         evoMan.logProgress = this.logProgress;  
+        // If Log Progress is checked activate InputField for number of generations logged and for path to save textfile to
         if (compareToggle.isOn)
         {
             InputField stopAtGeneration = GameObject.Find("StopAtGenerationInput").GetComponent<InputField>();
             stopGenerationNumber = int.Parse(stopAtGeneration.text);
             evoMan.stopNumber = stopGenerationNumber;
-            InputField saveNeuralNet = GameObject.Find("SaveNeuralNetInput").GetComponent<InputField>();
+            InputField saveNeuralNet = GameObject.Find("SaveLogInput").GetComponent<InputField>();
             string savePath = saveNeuralNet.text;
             evoMan.textPath = savePath;
         }   
-        // Starts the simulation by toggling 3 bools in 3 different scripts
+        // Starts the simulation by toggling bools in UIController.cs and UISimulationController.cs
         uiCon.start = true;
         uiSimCon.start = true;
         // Deactivates GUI after start
@@ -142,6 +158,7 @@ public class PublicManager : MonoBehaviour {
     {
         GameObject.Find("StdDevInputField").GetComponent<InputField>().text = stdDevSlider.value.ToString();
     }
+    // Updates Slider if InputField value is changed
     public void OnStdDevInputChanged(InputField stdDevInput)
     {
         GameObject.Find("StdDevSlider").GetComponent<Slider>().value = float.Parse(stdDevInput.text);
@@ -202,12 +219,12 @@ public class PublicManager : MonoBehaviour {
         if(toggle.isOn)
         {
             stopAtGenerationPanel.SetActive(true);
-            saveNeuralNetPanel.SetActive(true);
+            saveLogPanel.SetActive(true);
         }
         else
         {
             stopAtGenerationPanel.SetActive(false);
-            saveNeuralNetPanel.SetActive(false);
+            saveLogPanel.SetActive(false);
         }
     }
     // Caps the population at 80 for performance reasons
@@ -245,23 +262,25 @@ public class PublicManager : MonoBehaviour {
             mutationProb.text = "1";
         }
     }
-
+    // Activates GUI for Test, deactivates all Settings, except Training/Test Toggles and Log Progress Checkbox, activates InputField to set path from where to load the neuralnetwork weights txt
     public void TestToggle(Toggle testToggle)
     {
         if(testToggle.isOn)
         {
             loadNeuralNetPanel.SetActive(true);
+            saveNeuralNetPanel.SetActive(false);
             neuralNetworkPanel.SetActive(false);
             evolutionPanel.SetActive(false);
         }
         else
         {
             loadNeuralNetPanel.SetActive(false);
+            saveNeuralNetPanel.SetActive(true);
             neuralNetworkPanel.SetActive(true);
             evolutionPanel.SetActive(true);
         }
     }
-
+    // If Training Toggle is set, activate Auto Save Checkbox
     public void TrainingToggle(Toggle trainingToggle)
     {
         if (trainingToggle.isOn)
@@ -271,6 +290,18 @@ public class PublicManager : MonoBehaviour {
         else
         {
             saveBestCarToggle.SetActive(false);
+        }
+    }
+    // If Auto Save Toggle ist set, activate Save Path Input Field
+    public void AutoSaveToggle(Toggle autoSaveToggle)
+    {
+        if (autoSaveToggle.isOn)
+        {
+            saveNeuralNetPanel.SetActive(true);
+        }
+        else
+        {
+            saveNeuralNetPanel.SetActive(false);
         }
     }
 }
